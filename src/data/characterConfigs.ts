@@ -1,10 +1,12 @@
-import portraitAArtwork from "../assets/character-portrait-a-cutout.png";
-import portraitBArtwork from "../assets/character-portrait-b-cutout.png";
+import blinkArtwork from "../assets/character-frame-blink.png";
+import breatheArtwork from "../assets/character-frame-breathe.png";
+import idleArtwork from "../assets/character-frame-idle.png";
 import type { EquipmentItem } from "./equipment";
 import { validateEquipment } from "./equipment";
 
 export type PortraitFrame = {
-  id: "idle-a" | "idle-b";
+  id: "idle" | "breathe" | "blink";
+  role: "base" | "blink";
   artwork: string;
   /** Percentage y-coordinate where the soles meet the floor in this source image. */
   floorY: number;
@@ -16,7 +18,7 @@ export type CharacterConfig = {
   height: number;
   /** Shared scene baseline. Frame offsets are calculated against this value. */
   floorY: number;
-  frames: [PortraitFrame, PortraitFrame];
+  frames: [PortraitFrame, PortraitFrame, PortraitFrame];
   hotspots: EquipmentItem[];
 };
 
@@ -60,10 +62,11 @@ export const characterConfig: CharacterConfig = {
   height: 1536,
   floorY: 87.5,
   frames: [
-    // Measured from the 1536px source canvases: A soles end at y=1344,
-    // while B ends at y=1310. Per-frame offsets keep both on A's baseline.
-    { id: "idle-a", artwork: portraitAArtwork, floorY: 87.5 },
-    { id: "idle-b", artwork: portraitBArtwork, floorY: 85.286 },
+    // Measured from the normalized 1536px canvases. The CSS offsets lift each
+    // frame just enough to keep its soles on the idle frame's baseline.
+    { id: "idle", role: "base", artwork: idleArtwork, floorY: 87.5 },
+    { id: "breathe", role: "base", artwork: breatheArtwork, floorY: 87.565 },
+    { id: "blink", role: "blink", artwork: blinkArtwork, floorY: 87.695 },
   ],
   hotspots: portraitHotspots,
 };
@@ -71,7 +74,8 @@ export const characterConfig: CharacterConfig = {
 export function validateCharacterConfig(config: CharacterConfig): void {
   if (config.width <= 0 || config.height <= 0) throw new Error("Invalid character dimensions");
   if (config.floorY < 0 || config.floorY > 100) throw new Error("Scene floor is outside stage");
-  if (config.frames.length !== 2) throw new Error("Character must define two idle frames");
+  if (config.frames.length < 2) throw new Error("Character must define multiple animation frames");
+  if (config.frames.filter(({ role }) => role === "base").length < 2) throw new Error("Character must define multiple base frames");
   if (new Set(config.frames.map(({ id }) => id)).size !== config.frames.length) throw new Error("Duplicate portrait frame id");
   for (const frame of config.frames) {
     if (frame.floorY < 0 || frame.floorY > 100) throw new Error(`Frame floor is outside stage: ${frame.id}`);

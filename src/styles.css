@@ -32,9 +32,10 @@ a { color: inherit; }
 .character-stage { position: absolute; inset: 0; }
 .character-scene { position: absolute; inset: 0; overflow: hidden; }
 .character-visual { position: absolute; inset: 0; filter: drop-shadow(8px 10px 0 #080b13aa); }
-.character-frame { position: absolute; left: 0; bottom: var(--floor-offset); display: block; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; transform-origin: 50% 100%; will-change: transform, opacity; backface-visibility: hidden; }
-.character-frame--1 { opacity: 1; animation: idle-frame-a 3.8s cubic-bezier(.45, 0, .55, 1) infinite; }
-.character-frame--2 { opacity: .06; animation: idle-frame-b 3.8s cubic-bezier(.45, 0, .55, 1) infinite; }
+.character-frame { position: absolute; left: 0; bottom: var(--floor-offset); display: block; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; opacity: 0; transform-origin: 50% 100%; backface-visibility: hidden; }
+.character-frame[data-active="true"] { opacity: 1; }
+.character-visual::after { content: ""; position: absolute; z-index: -1; left: 34%; right: 31%; bottom: 10.5%; height: 2.2%; border-radius: 50%; background: #080b1380; transform-origin: center; animation: ground-breathe 2.7s steps(3, end) infinite; }
+.character-visual[data-reacting="true"]::after { animation: ground-reaction 240ms steps(2, end) both; }
 
 .hotspot-layer, .connection-layer { position: absolute; inset: 0; width: 100%; height: 100%; }
 .connection-layer { z-index: 8; pointer-events: none; overflow: visible; }
@@ -50,7 +51,7 @@ a { color: inherit; }
 .equipment-hotspot:focus-visible span::after { content: "+"; position: absolute; right: -8px; top: -10px; color: var(--gold); font-weight: 900; }
 .equipment-hotspot--subtle { cursor: pointer; }
 .equipment-hotspot--subtle span { inset: 8%; border: 1px solid transparent; border-radius: 45%; }
-.equipment-hotspot--subtle:hover span, .equipment-hotspot--subtle[aria-expanded="true"] span { border-color: #ffe5a8cc; background: #e6b95f14; box-shadow: 0 0 12px 4px #e6b95f55; }
+.equipment-hotspot--subtle:hover span, .equipment-hotspot--subtle[aria-expanded="true"] span, .equipment-hotspot--subtle[data-reacting="true"] span { border-color: #ffe5a8cc; background: #e6b95f14; box-shadow: 0 0 12px 4px #e6b95f55; }
 
 .tooltip-layer { position: absolute; inset: 0; z-index: 20; pointer-events: none; }
 .equipment-tooltip { position: absolute; top: 48%; width: clamp(220px, 28%, 280px); padding: 1.2rem 1.15rem 1.1rem; color: var(--ink); background: var(--paper); border: 4px solid var(--border); box-shadow: 7px 7px 0 #080b13; transform: translateY(-50%); pointer-events: auto; animation: card-in 220ms ease-out both; }
@@ -73,20 +74,8 @@ a { color: inherit; }
 
 @keyframes line-in { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
 @keyframes card-in { from { opacity: 0; transform: translateY(calc(-50% + 7px)); } }
-@keyframes idle-frame-a {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  22% { opacity: .78; transform: scale(1.001, 1.003); }
-  48% { opacity: .12; transform: scale(1.004, 1.009); }
-  68% { opacity: .34; transform: scale(1.003, 1.006); }
-  86% { opacity: .86; transform: scale(1.001, 1.002); }
-}
-@keyframes idle-frame-b {
-  0%, 100% { opacity: .06; transform: scale(1); }
-  22% { opacity: .3; transform: scale(1.001, 1.003); }
-  48% { opacity: 1; transform: scale(1.004, 1.009); }
-  68% { opacity: .76; transform: scale(1.003, 1.006); }
-  86% { opacity: .2; transform: scale(1.001, 1.002); }
-}
+@keyframes ground-breathe { 0%, 100% { transform: scaleX(1); opacity: .6; } 50% { transform: scaleX(.97); opacity: .48; } }
+@keyframes ground-reaction { 50% { transform: scaleX(1.12); background: #e6b95f70; } }
 
 @media (max-width: 700px) {
   .hero { padding-top: 1rem; }
@@ -107,7 +96,5 @@ a { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-  .character-frame { animation: none; }
-  .character-frame--1 { opacity: 1; transform: none; }
-  .character-frame--2 { opacity: 0; transform: none; }
+  .character-visual::after { animation: none; }
 }
