@@ -1,6 +1,6 @@
 # My Character
 
-장비를 탐색하며 인프라·클라우드 기술을 살펴보는 인터랙티브 포트폴리오 MVP입니다. 픽셀 아트 포트폴리오 보드의 여섯 장비를 hover, 키보드, 또는 tap으로 열 수 있습니다.
+장비를 탐색하며 인프라·클라우드 기술을 살펴보는 인터랙티브 포트폴리오 MVP입니다. 픽셀 아트 포트폴리오 보드의 여섯 장비를 hover, 키보드, 또는 tap으로 열 수 있습니다. 기본 화면에는 설명을 표시하지 않으며, 장비를 선택하면 해당 장비의 RPG 스타일 말풍선만 고정됩니다.
 
 예상 공개 주소: `https://moolmong.github.io/My_Character/` (Hermes의 배포 및 확인 전까지는 미배포 상태입니다.)
 
@@ -10,6 +10,7 @@
 - 데이터 기반 percentage hitbox와 anchor
 - 분리된 캐릭터, hotspot, SVG connection, tooltip 레이어
 - desktop hover, keyboard Enter/Space/Escape, mobile tap/outside close
+- `장비 설명 모두 보기` 버튼으로 여섯 설명을 별도의 반응형 목록에서 열고 닫기 (`aria-pressed` 상태 제공)
 - 반응형 bottom card, reduced-motion 지원, GitHub Pages workflow
 - Vitest + Testing Library 기반 핵심 상호작용 테스트
 

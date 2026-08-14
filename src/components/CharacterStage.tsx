@@ -4,6 +4,7 @@ import { useFinePointer } from "../hooks/useFinePointer";
 import { CharacterVisual } from "./CharacterVisual";
 import { ConnectionLine } from "./ConnectionLine";
 import { EquipmentHotspot } from "./EquipmentHotspot";
+import { EquipmentList } from "./EquipmentList";
 import { EquipmentTooltip } from "./EquipmentTooltip";
 
 type Mode = "hover" | "focus" | "pinned" | null;
@@ -12,8 +13,10 @@ type Geometry = { width: number; height: number; end: { x: number; y: number } }
 export function CharacterStage() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>(null);
+  const [showAll, setShowAll] = useState(false);
   const [geometry, setGeometry] = useState<Geometry | null>(null);
   const finePointer = useFinePointer();
+  const explorerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef(new Map<string, HTMLButtonElement>());
@@ -35,7 +38,7 @@ export function CharacterStage() {
     const onPointerDown = (event: PointerEvent) => {
       if (mode !== "pinned") return;
       const target = event.target as Node;
-      if (!stageRef.current?.contains(target) && !tooltipRef.current?.contains(target)) close();
+      if (!explorerRef.current?.contains(target)) close();
     };
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape" && activeId) close(mode === "pinned");
@@ -64,31 +67,44 @@ export function CharacterStage() {
   }, [active, measure]);
 
   return (
-    <div className="stage-shell">
-      <div className="character-stage" ref={stageRef} data-testid="character-stage">
-        <CharacterVisual />
-        {active && geometry && (
-          <ConnectionLine width={geometry.width} height={geometry.height} start={{ x: geometry.width * active.anchor.x / 100, y: geometry.height * active.anchor.y / 100 }} end={geometry.end} />
-        )}
-        <div className="hotspot-layer">
-          {equipment.map((item) => (
-            <EquipmentHotspot
-              key={item.id}
-              item={item}
-              active={activeId === item.id}
-              buttonRef={(node) => { if (node) buttonRefs.current.set(item.id, node); else buttonRefs.current.delete(item.id); }}
-              onPointerEnter={() => { if (finePointer && mode !== "pinned") { setActiveId(item.id); setMode("hover"); } }}
-              onPointerLeave={() => { if (finePointer && mode === "hover" && activeId === item.id) close(); }}
-              onFocus={() => { if (mode !== "pinned") { setActiveId(item.id); setMode("focus"); } }}
-              onBlur={() => { if (mode === "focus" && activeId === item.id) close(); }}
-              onClick={() => togglePinned(item.id)}
-            />
-          ))}
+    <div className="equipment-explorer" ref={explorerRef}>
+      <div className="stage-shell">
+        <div className="character-stage" ref={stageRef} data-testid="character-stage">
+          <CharacterVisual />
+          {active && geometry && (
+            <ConnectionLine width={geometry.width} height={geometry.height} start={{ x: geometry.width * active.anchor.x / 100, y: geometry.height * active.anchor.y / 100 }} end={geometry.end} />
+          )}
+          <div className="hotspot-layer">
+            {equipment.map((item) => (
+              <EquipmentHotspot
+                key={item.id}
+                item={item}
+                active={activeId === item.id}
+                buttonRef={(node) => { if (node) buttonRefs.current.set(item.id, node); else buttonRefs.current.delete(item.id); }}
+                onPointerEnter={() => { if (finePointer && mode !== "pinned") { setActiveId(item.id); setMode("hover"); } }}
+                onPointerLeave={() => { if (finePointer && mode === "hover" && activeId === item.id) close(); }}
+                onFocus={() => { if (mode !== "pinned") { setActiveId(item.id); setMode("focus"); } }}
+                onBlur={() => { if (mode === "focus" && activeId === item.id) close(); }}
+                onClick={() => togglePinned(item.id)}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="tooltip-layer" aria-live="polite">
+          {active && <EquipmentTooltip ref={tooltipRef} item={active} onClose={() => close(mode === "pinned")} />}
         </div>
       </div>
-      <div className="tooltip-layer" aria-live="polite">
-        {active && <EquipmentTooltip ref={tooltipRef} item={active} onClose={() => close(mode === "pinned")} />}
-      </div>
+      <button
+        type="button"
+        className="all-equipment-toggle"
+        aria-pressed={showAll}
+        aria-expanded={showAll}
+        aria-controls="all-equipment-explanations"
+        onClick={() => setShowAll((visible) => !visible)}
+      >
+        {showAll ? "설명 모두 닫기" : "장비 설명 모두 보기"}
+      </button>
+      <EquipmentList items={equipment} hidden={!showAll} />
     </div>
   );
 }
