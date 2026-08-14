@@ -4,16 +4,14 @@ import { describe, expect, it } from "vitest";
 import { CharacterStage } from "./CharacterStage";
 
 describe("CharacterStage", () => {
-  it("renders one character experience with two frames and no legacy controls", () => {
+  it("renders one stable character image and no legacy controls", () => {
     render(<CharacterStage />);
 
     expect(screen.getByRole("group", { name: "인터랙티브 캐릭터" })).toBeInTheDocument();
     expect(screen.getByTestId("character-stage")).toHaveAttribute("data-config", "main-character");
-    expect(document.querySelectorAll(".character-frame")).toHaveLength(2);
+    expect(document.querySelectorAll(".character-frame")).toHaveLength(1);
     expect(document.querySelector('[data-frame="idle-a"]')).toHaveAttribute("data-floor-y", "87.5");
-    expect(document.querySelector('[data-frame="idle-a"]')).toHaveStyle({ "--floor-offset": "0%" });
-    expect(document.querySelector('[data-frame="idle-b"]')).toHaveAttribute("data-floor-y", "85.286");
-    expect(document.querySelector('[data-frame="idle-b"]')).toHaveStyle({ "--floor-offset": "-2.214%" });
+    expect(document.querySelector('[data-frame="idle-b"]')).not.toBeInTheDocument();
     expect(screen.queryByRole("group", { name: /캐릭터 화면 선택/ })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /장비 보드|캐릭터 A|캐릭터 B|장비 설명 모두 보기/ })).not.toBeInTheDocument();
     expect(screen.getAllByRole("button").filter((button) => button.classList.contains("equipment-hotspot"))).toHaveLength(2);

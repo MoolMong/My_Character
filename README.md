@@ -1,17 +1,17 @@
 # My Character
 
-하나의 캐릭터를 중심으로 인프라·클라우드 기술을 살펴보는 인터랙티브 포트폴리오 MVP입니다. 두 portrait는 서로 다른 캐릭터가 아니라 한 캐릭터의 idle 상태 두 프레임이며, 장갑과 신발을 hover, 키보드, 또는 tap으로 선택할 수 있습니다.
+하나의 캐릭터를 중심으로 인프라·클라우드 기술을 살펴보는 인터랙티브 포트폴리오 MVP입니다. 장갑과 신발을 hover, 키보드, 또는 tap으로 선택할 수 있습니다.
 
 공개 주소: `https://moolmong.github.io/My_Character/`
 
 ## Stack and features
 
 - Vite, React, TypeScript, plain CSS
-- 하나의 데이터 기반 character config, 두 portrait frame, 공유 percentage hotspot map
+- 하나의 데이터 기반 character config, 안정적인 단일 portrait 렌더링, 공유 percentage hotspot map
 - 분리된 캐릭터, hotspot, SVG connection, tooltip 레이어
 - desktop hover, keyboard Enter/Space/Escape, mobile tap/outside close
-- 두 이미지를 같은 fixed-bottom scene에 겹친 6초 CSS opacity crossfade
-- frame별 `floorY`와 공유 scene `floorY`로 발 기준선을 명시하고, 캐릭터 전체 이동 없이 정렬
+- 전체 이미지 crossfade 없이 base portrait를 고정 렌더링해 이동 중 왜곡과 이중 가장자리 방지
+- 보존된 frame별 `floorY`와 공유 scene `floorY` 메타데이터
 - 반응형 bottom card, reduced-motion 지원, GitHub Pages workflow
 - Vitest + Testing Library 기반 핵심 상호작용 테스트
 
