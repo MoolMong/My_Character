@@ -3,6 +3,7 @@ import type { EquipmentItem } from "../data/equipment";
 
 type Props = {
   item: EquipmentItem;
+  subtle?: boolean;
   active: boolean;
   buttonRef: Ref<HTMLButtonElement>;
   onFocus: () => void;
@@ -12,13 +13,13 @@ type Props = {
   onClick: () => void;
 };
 
-export function EquipmentHotspot({ item, active, buttonRef, ...events }: Props) {
+export function EquipmentHotspot({ item, subtle = false, active, buttonRef, ...events }: Props) {
   const style = { "--x": `${item.hitbox.x}%`, "--y": `${item.hitbox.y}%`, "--w": `${item.hitbox.width}%`, "--h": `${item.hitbox.height}%` } as CSSProperties;
   return (
     <button
       ref={buttonRef}
       type="button"
-      className="equipment-hotspot"
+      className={`equipment-hotspot${subtle ? " equipment-hotspot--subtle" : ""}`}
       style={style}
       aria-label={`${item.title}: ${item.technology} 장비 설명`}
       aria-expanded={active}

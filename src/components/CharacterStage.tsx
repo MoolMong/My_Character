@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { equipment, type EquipmentItem } from "../data/equipment";
+import { characterConfigs, type CharacterConfigId } from "../data/characterConfigs";
+import { equipment } from "../data/equipment";
 import { useFinePointer } from "../hooks/useFinePointer";
 import { CharacterVisual } from "./CharacterVisual";
 import { ConnectionLine } from "./ConnectionLine";
@@ -14,13 +15,15 @@ export function CharacterStage() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>(null);
   const [showAll, setShowAll] = useState(false);
+  const [configId, setConfigId] = useState<CharacterConfigId>("equipment-board");
   const [geometry, setGeometry] = useState<Geometry | null>(null);
   const finePointer = useFinePointer();
   const explorerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef(new Map<string, HTMLButtonElement>());
-  const active = equipment.find((item) => item.id === activeId) ?? null;
+  const config = characterConfigs.find((item) => item.id === configId) ?? characterConfigs[0];
+  const active = config.equipment.find((item) => item.id === activeId) ?? null;
 
   const close = useCallback((restoreFocus = false) => {
     const id = activeId;
@@ -32,6 +35,15 @@ export function CharacterStage() {
   const togglePinned = (id: string) => {
     if (activeId === id && mode === "pinned") close();
     else { setActiveId(id); setMode("pinned"); }
+  };
+
+  const selectConfig = (id: CharacterConfigId) => {
+    if (id === configId) return;
+    setActiveId(null);
+    setMode(null);
+    setGeometry(null);
+    buttonRefs.current.clear();
+    setConfigId(id);
   };
 
   useEffect(() => {
@@ -68,26 +80,36 @@ export function CharacterStage() {
 
   return (
     <div className="equipment-explorer" ref={explorerRef}>
-      <div className="stage-shell">
-        <div className="character-stage" ref={stageRef} data-testid="character-stage">
-          <CharacterVisual />
-          {active && geometry && (
-            <ConnectionLine width={geometry.width} height={geometry.height} start={{ x: geometry.width * active.anchor.x / 100, y: geometry.height * active.anchor.y / 100 }} end={geometry.end} />
-          )}
-          <div className="hotspot-layer">
-            {equipment.map((item) => (
-              <EquipmentHotspot
-                key={item.id}
-                item={item}
-                active={activeId === item.id}
-                buttonRef={(node) => { if (node) buttonRefs.current.set(item.id, node); else buttonRefs.current.delete(item.id); }}
-                onPointerEnter={() => { if (finePointer && mode !== "pinned") { setActiveId(item.id); setMode("hover"); } }}
-                onPointerLeave={() => { if (finePointer && mode === "hover" && activeId === item.id) close(); }}
-                onFocus={() => { if (mode !== "pinned") { setActiveId(item.id); setMode("focus"); } }}
-                onBlur={() => { if (mode === "focus" && activeId === item.id) close(); }}
-                onClick={() => togglePinned(item.id)}
-              />
-            ))}
+      <div className="visual-config-switcher" role="group" aria-label="캐릭터 화면 선택">
+        {characterConfigs.map((option) => (
+          <button key={option.id} type="button" aria-pressed={option.id === configId} onClick={() => selectConfig(option.id)}>
+            {option.label}
+          </button>
+        ))}
+      </div>
+      <div className="stage-shell" style={{ aspectRatio: `${config.width} / ${config.height}` }}>
+        <div className="character-stage" ref={stageRef} data-testid="character-stage" data-config={config.id}>
+          <div className={`character-scene${config.portrait ? " character-scene--portrait" : ""}`}>
+            <CharacterVisual artwork={config.artwork} />
+            {active && geometry && (
+              <ConnectionLine width={geometry.width} height={geometry.height} start={{ x: geometry.width * active.anchor.x / 100, y: geometry.height * active.anchor.y / 100 }} end={geometry.end} />
+            )}
+            <div className="hotspot-layer">
+              {config.equipment.map((item) => (
+                <EquipmentHotspot
+                  key={item.id}
+                  item={item}
+                  subtle={config.portrait}
+                  active={activeId === item.id}
+                  buttonRef={(node) => { if (node) buttonRefs.current.set(item.id, node); else buttonRefs.current.delete(item.id); }}
+                  onPointerEnter={() => { if (finePointer && mode !== "pinned") { setActiveId(item.id); setMode("hover"); } }}
+                  onPointerLeave={() => { if (finePointer && mode === "hover" && activeId === item.id) close(); }}
+                  onFocus={() => { if (mode !== "pinned") { setActiveId(item.id); setMode("focus"); } }}
+                  onBlur={() => { if (mode === "focus" && activeId === item.id) close(); }}
+                  onClick={() => togglePinned(item.id)}
+                />
+              ))}
+            </div>
           </div>
         </div>
         <div className="tooltip-layer" aria-live="polite">

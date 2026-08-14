@@ -1,9 +1,7 @@
-import characterArtwork from "../assets/character-v1.png";
-
-export function CharacterVisual() {
+export function CharacterVisual({ artwork }: { artwork: string }) {
   return (
     <div className="character-visual" aria-hidden="true">
-      <img src={characterArtwork} alt="" />
+      <img src={artwork} alt="" />
     </div>
   );
 }

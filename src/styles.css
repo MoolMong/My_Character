@@ -28,8 +28,14 @@ a { color: inherit; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 .equipment-explorer { width: 100%; min-width: 0; }
-.stage-shell { position: relative; width: min(94vw, 900px); min-width: 0; aspect-ratio: 1122 / 1402; margin: 0 auto; }
+.visual-config-switcher { display: flex; justify-content: center; flex-wrap: wrap; gap: .35rem; margin: 0 auto .65rem; }
+.visual-config-switcher button { min-height: 2.4rem; padding: .45rem .7rem; border: 1px solid #706751; background: #171c2c; color: var(--paper-muted); cursor: pointer; }
+.visual-config-switcher button:hover, .visual-config-switcher button[aria-pressed="true"] { border-color: var(--gold); color: var(--paper); background: #263149; }
+.visual-config-switcher button:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.stage-shell { position: relative; width: min(94vw, 900px, 64vh); width: min(94vw, 900px, 64svh); min-width: 0; margin: 0 auto; transition: aspect-ratio 180ms ease; }
 .character-stage { position: absolute; inset: 0; }
+.character-scene { position: absolute; inset: 0; transform-origin: 50% 92%; }
+.character-scene--portrait { animation: portrait-breathe 6s ease-in-out infinite; }
 .character-visual { position: absolute; inset: 0; filter: drop-shadow(8px 10px 0 #080b13aa); }
 .character-visual img { display: block; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
 
@@ -45,6 +51,9 @@ a { color: inherit; }
 .equipment-hotspot:hover span, .equipment-hotspot[aria-expanded="true"] span { border-color: var(--gold); background: #e6b95f1d; box-shadow: 0 0 0 3px #111522cc, 0 0 18px #e6b95f66; }
 .equipment-hotspot:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 .equipment-hotspot:focus-visible span::after { content: "+"; position: absolute; right: -8px; top: -10px; color: var(--gold); font-weight: 900; }
+.equipment-hotspot--subtle { cursor: pointer; }
+.equipment-hotspot--subtle span { inset: 8%; border: 1px solid transparent; border-radius: 45%; }
+.equipment-hotspot--subtle:hover span, .equipment-hotspot--subtle[aria-expanded="true"] span { border-color: #ffe5a8cc; background: #e6b95f14; box-shadow: 0 0 12px 4px #e6b95f55; }
 
 .tooltip-layer { position: absolute; inset: 0; z-index: 20; pointer-events: none; }
 .equipment-tooltip { position: absolute; top: 48%; width: clamp(220px, 28%, 280px); padding: 1.2rem 1.15rem 1.1rem; color: var(--ink); background: var(--paper); border: 4px solid var(--border); box-shadow: 7px 7px 0 #080b13; transform: translateY(-50%); pointer-events: auto; animation: card-in 220ms ease-out both; }
@@ -78,10 +87,14 @@ a { color: inherit; }
 
 @keyframes line-in { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
 @keyframes card-in { from { opacity: 0; transform: translateY(calc(-50% + 7px)); } }
+@keyframes portrait-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.002); }
+}
 
 @media (max-width: 700px) {
   .hero { padding-top: 1rem; }
-  .stage-shell { width: 100%; }
+  .stage-shell { width: min(100%, 58svh); }
   .connection-layer { display: none; }
   .tooltip-layer { position: fixed; inset: auto max(.75rem, env(safe-area-inset-right)) max(.75rem, env(safe-area-inset-bottom)) max(.75rem, env(safe-area-inset-left)); }
   .equipment-tooltip { position: relative; inset: auto !important; width: 100%; max-height: min(40vh, 19rem); overflow: auto; transform: none; animation-name: mobile-card-in; }
@@ -90,9 +103,17 @@ a { color: inherit; }
   .desktop-instruction { display: none; }.touch-instruction { display: inline; }
   .content-section { grid-template-columns: 2.5rem 1fr; }
 }
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero { min-height: 100svh; padding-block: .5rem; }
+  .visual-config-switcher { margin-bottom: .35rem; }
+  .stage-shell { width: min(48vw, 56svh); }
+  .all-equipment-toggle { margin-top: .35rem; padding-block: .5rem; }
+  .scroll-cue { margin-top: .35rem; }
+}
 @keyframes mobile-card-in { from { opacity: 0; transform: translateY(7px); } }
 @media (hover: none), (pointer: coarse) { .desktop-instruction { display: none; }.touch-instruction { display: inline; } }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .character-scene--portrait { animation: none; transform: none; }
 }
