@@ -11,6 +11,9 @@ describe("CharacterStage", () => {
     expect(screen.getByTestId("character-stage")).toHaveAttribute("data-config", "main-character");
     expect(document.querySelectorAll(".character-master")).toHaveLength(1);
     expect(document.querySelector('[data-layer="fixed-master"]')).toBeInTheDocument();
+    expect(document.querySelector('[data-layer="upper-body-breathe"]')).toBeInTheDocument();
+    expect(document.querySelector('[data-layer="cape-settle"]')).toBeInTheDocument();
+    expect(document.querySelector('[data-layer="spear-tip-settle"]')).toBeInTheDocument();
     expect(document.querySelector('[data-layer="ground-shadow"]')).toBeInTheDocument();
     expect(document.querySelectorAll(".character-frame")).toHaveLength(0);
     expect(document.querySelector('[data-frame="breathe"], [data-frame="blink"]')).not.toBeInTheDocument();

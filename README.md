@@ -24,7 +24,7 @@
 
 요청에 언급된 별도 5-frame ZIP은 작업 시점의 저장소와 `src/assets` 어디에도 존재하지 않았습니다. 따라서 없는 frame을 생성하거나 추정하지 않았습니다. 현재 PNG들은 동일한 1024×1536 canvas이지만 reject frame은 translation/scale만으로 정규화할 수 없는 구조 변화가 있어 runtime normalization을 하지 않습니다.
 
-자연스러운 idle은 master를 움직이지 않고, 5.2–12.6초의 무작위 간격으로 150ms 동안 나타나는 작은 clasp/spear pixel accent와 6.7초 stepped ground shadow 변화만 사용합니다. 두 효과는 캐릭터 실루엣을 바꾸지 않습니다. 장갑/신발 선택은 해당 hotspot의 짧은 outline/glow로 반응하며, 신발은 ground ring도 pulse합니다. 모든 timer는 effect cleanup에서 해제되고 `requestAnimationFrame` loop는 없습니다. Reduced motion에서는 ambient accent와 shadow animation이 정지하지만 hotspot과 설명은 유지됩니다.
+자연스러운 idle은 master와 발을 움직이지 않습니다. 동일한 master를 상체/망토 끝/창끝의 좁은 영역으로만 clip한 local layer가 각각 4.2초, 8.9초, 11.3초의 다른 stepped rhythm에서 1–2px 움직이고, 더 선명한 contact shadow가 상체 호흡과 함께 폭과 농도를 바꿉니다. 전체 이미지 crossfade나 bobbing은 없습니다. 장갑/신발 선택은 해당 hotspot의 짧은 outline/glow로 반응하며, 신발은 ground ring도 pulse합니다. 장비 reaction 중 local idle은 잠시 멈추며, Reduced motion에서는 local layer와 shadow animation이 정지하지만 hotspot과 설명은 유지됩니다.
 
 ### Motion debug
 
