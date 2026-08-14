@@ -105,9 +105,7 @@ These sections should establish future page structure without fabricated claims 
 
 ## Asset decision
 
-`src/assets/character-v0.png` is a 1122×1402 illustrated reference board, not a transparent character cutout. It contains its own headings, Korean descriptions, item panels, connector lines, inventory, and contact icons. Cropping its center would still retain a textured background and risks clipping the spear, cloak, or boots; using the entire board would compete with and duplicate the new accessible interface.
-
-For this MVP, retain the supplied file unchanged as a design reference but do not render it as the hero. Render a clean CSS fallback character/silhouette inside a dedicated character visual component. The fallback will have approximate RPG equipment shapes sufficient to orient the six percentage-based hotspots, without logos or third-party art. Later replacement requires changing only the character visual source and recalibrating coordinate data.
+`src/assets/character-v1.png` is the current 1122×1402 hero artwork and is rendered as a complete, responsive board. Its embedded labels do not replace semantic content: six native hotspot buttons and independent tooltip descriptions remain keyboard, pointer, touch, and assistive-technology accessible. `src/assets/character-v0.png` is retained unchanged as the earlier design reference. Future replacement remains localized to `CharacterVisual`, the stage aspect ratio, and percentage coordinate recalibration.
 
 ## Out of scope
 

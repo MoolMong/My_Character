@@ -19,6 +19,7 @@ No runtime dependencies beyond React are expected. Interaction state and geometr
 ├── docs/
 ├── src/
 │   ├── assets/character-v0.png
+│   ├── assets/character-v1.png
 │   ├── components/
 │   │   ├── CharacterStage.tsx
 │   │   ├── CharacterVisual.tsx
@@ -42,7 +43,7 @@ Exact splitting may be adjusted during implementation if a file would otherwise 
 
 Within one responsive `CharacterStage` coordinate space, layers are ordered as follows:
 
-1. **Character visual:** the replaceable CSS fallback, later replaceable by an `<img>` without changing interaction components.
+1. **Character visual:** the replaceable `character-v1.png` image renderer, independent of interaction components.
 2. **SVG connection layer:** absolute stage overlay, `pointer-events: none`, `aria-hidden="true"`.
 3. **Hotspot layer:** native transparent buttons positioned from percentage hitboxes, above art and line.
 4. **Tooltip layer:** desktop side cards or a mobile fixed card, above all stage layers.
@@ -75,15 +76,15 @@ export type EquipmentItem = {
 };
 ```
 
-`equipment.ts` is the only source of item content and coordinate truth. Coordinate values are percentages of the character coordinate wrapper, not viewport pixels and not coordinates embedded in an image. Initial values will be calibrated to the CSS fallback and documented as provisional.
+`equipment.ts` is the only source of item content and coordinate truth. Coordinate values are percentages of the responsive stage rather than fixed viewport pixels or values embedded in the image. Current values are calibrated to the six labelled panels in `character-v1.png`.
 
 Development-only validation should reject or warn about duplicate IDs, non-finite values, rectangles outside 0–100, and anchors outside 0–100. Hitboxes may overlap visually only when unavoidable; DOM order will follow a predictable top-to-bottom equipment order.
 
 ## Character renderer boundary
 
-`CharacterVisual` exposes no interaction logic. For MVP it produces a semantic-free, `aria-hidden` CSS silhouette made from a small number of elements/pseudo-elements representing body, spear, armor, shield, bracer, cloak, and boots. Hotspots are siblings, never nested inside those shapes.
+`CharacterVisual` exposes no interaction logic. It imports and renders `character-v1.png` as semantic-free, `aria-hidden` art. Hotspots are siblings, never nested in the image.
 
-When a transparent final asset arrives:
+When replacement art arrives:
 
 1. place it under `src/assets/`;
 2. change `CharacterVisual` to render the imported image using `object-fit: contain`;
@@ -91,7 +92,7 @@ When a transparent final asset arrives:
 4. edit only `hitbox` and `anchor` percentages in `equipment.ts`;
 5. verify all input modes and line endpoints.
 
-The supplied board remains in the repository and can be cited in the README as reference-only Asset v0.
+The earlier `character-v0.png` remains in the repository as a reference-only asset.
 
 ## State and event model
 
@@ -174,7 +175,7 @@ A skip link is recommended because six hotspot controls precede the supporting c
 
 ## Key decisions and tradeoffs
 
-- **CSS fallback over supplied board:** preserves a clean hero and honest layer separation; visual fidelity is intentionally limited until final art exists.
+- **Board image with independent interaction layers:** delivers the supplied visual while keeping the image renderer, percentage hitboxes, lines, and accessible tooltip content replaceable.
 - **Percentage data plus measured endpoint:** makes equipment placement asset-relative while allowing tooltips to reflow responsively.
 - **One active state:** prevents overlapping cards and reduces contradictory ARIA state.
 - **Native buttons:** supplies keyboard activation and focus behavior with less custom event code.

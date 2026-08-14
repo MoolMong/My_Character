@@ -30,10 +30,10 @@ The current pass is planning only. No package manifest, application source, gene
 
 ## Asset and intellectual-property constraints
 
-- `src/assets/character-v0.png` is the only supplied third-party-like visual input and must remain in the repository.
-- It is a full 1122×1402 illustrated reference board with embedded character, copy, panels, icons, and lines—not a transparent cutout.
-- Do not treat embedded panels/labels as accessible page content and do not align production hitboxes to pixels in that board.
-- MVP approach: keep the board unchanged and reference-only; use an original CSS fallback silhouette/character visual for the hero.
+- `src/assets/character-v1.png` is the current supplied 1122×1402 hero board; `character-v0.png` is retained unchanged as an earlier reference.
+- The current board has embedded character, copy, panels, icons, and lines—not a transparent cutout.
+- Do not treat embedded panels/labels as the only accessible page content: keep all six native controls and independent text descriptions.
+- Keep asset rendering isolated in `CharacterVisual`; keep hitboxes, equipment content, lines, and tooltips in their existing independent layers.
 - Do not download fonts, icons, logos, art, or other third-party assets.
 - Do not place large Kubernetes, AWS, Python, Linux, or other technology logos on equipment.
 - Future art replacement must be localized to the character renderer plus coordinate recalibration.

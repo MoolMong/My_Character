@@ -13,11 +13,7 @@ export default function App() {
       <a className="skip-link" href="#about">장비 건너뛰기</a>
       <main>
         <section className="hero" aria-labelledby="page-title">
-          <header className="hero-copy">
-            <p className="eyebrow">Infrastructure / Cloud Engineer</p>
-            <h1 id="page-title">시스템을 지키는 기술,<br />더 나은 운영을 만드는 사람.</h1>
-            <p className="intro">운영을 이해하고 자동화로 개선하는 인프라 엔지니어입니다.</p>
-          </header>
+          <h1 id="page-title" className="visually-hidden">클라우드 인프라 엔지니어 포트폴리오</h1>
           <CharacterStage />
           <p className="instruction"><span className="desktop-instruction">장비에 마우스를 올리거나 Tab 키로 살펴보세요.</span><span className="touch-instruction">장비를 탭해 기술을 살펴보세요.</span></p>
           <a className="scroll-cue" href="#about">이야기 더 보기 <span aria-hidden="true">↓</span></a>

@@ -1,5 +1,7 @@
 # My_Character MVP Task Plan
 
+> Current asset update: `character-v1.png` supersedes the original CSS-fallback decision below. It is now the isolated hero renderer; `character-v0.png` remains a reference. The historical pass checklist is retained for implementation context.
+
 This plan governs the later implementation and review passes. Check tasks only after they are completed and verified. Codex must not commit or push; Hermes owns repository creation, Git history, and live Pages verification.
 
 ## Pass 1 — Planning
