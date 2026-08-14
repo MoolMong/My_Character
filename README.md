@@ -10,7 +10,7 @@
 - 하나의 데이터 기반 character config, 두 portrait frame, 공유 percentage hotspot map
 - 분리된 캐릭터, hotspot, SVG connection, tooltip 레이어
 - desktop hover, keyboard Enter/Space/Escape, mobile tap/outside close
-- 두 이미지를 같은 fixed-bottom scene에 겹친 6초 CSS opacity crossfade
+- 두 이미지를 같은 fixed-bottom scene에 겹친 3.8초 CSS 호흡 모션과 연속 opacity crossfade
 - frame별 `floorY`와 공유 scene `floorY`로 발 기준선을 명시하고, 캐릭터 전체 이동 없이 정렬
 - 반응형 bottom card, reduced-motion 지원, GitHub Pages workflow
 - Vitest + Testing Library 기반 핵심 상호작용 테스트

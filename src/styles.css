@@ -32,9 +32,9 @@ a { color: inherit; }
 .character-stage { position: absolute; inset: 0; }
 .character-scene { position: absolute; inset: 0; overflow: hidden; }
 .character-visual { position: absolute; inset: 0; filter: drop-shadow(8px 10px 0 #080b13aa); }
-.character-frame { position: absolute; left: 0; bottom: var(--floor-offset); display: block; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
-.character-frame--1 { opacity: 1; animation: idle-frame-a 6s ease-in-out infinite; }
-.character-frame--2 { opacity: 0; animation: idle-frame-b 6s ease-in-out infinite; }
+.character-frame { position: absolute; left: 0; bottom: var(--floor-offset); display: block; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; transform-origin: 50% 100%; will-change: transform, opacity; backface-visibility: hidden; }
+.character-frame--1 { opacity: 1; animation: idle-frame-a 3.8s cubic-bezier(.45, 0, .55, 1) infinite; }
+.character-frame--2 { opacity: .06; animation: idle-frame-b 3.8s cubic-bezier(.45, 0, .55, 1) infinite; }
 
 .hotspot-layer, .connection-layer { position: absolute; inset: 0; width: 100%; height: 100%; }
 .connection-layer { z-index: 8; pointer-events: none; overflow: visible; }
@@ -73,8 +73,20 @@ a { color: inherit; }
 
 @keyframes line-in { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
 @keyframes card-in { from { opacity: 0; transform: translateY(calc(-50% + 7px)); } }
-@keyframes idle-frame-a { 0%, 42% { opacity: 1; } 50%, 92% { opacity: 0; } 100% { opacity: 1; } }
-@keyframes idle-frame-b { 0%, 42% { opacity: 0; } 50%, 92% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes idle-frame-a {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  22% { opacity: .78; transform: scale(1.001, 1.003); }
+  48% { opacity: .12; transform: scale(1.004, 1.009); }
+  68% { opacity: .34; transform: scale(1.003, 1.006); }
+  86% { opacity: .86; transform: scale(1.001, 1.002); }
+}
+@keyframes idle-frame-b {
+  0%, 100% { opacity: .06; transform: scale(1); }
+  22% { opacity: .3; transform: scale(1.001, 1.003); }
+  48% { opacity: 1; transform: scale(1.004, 1.009); }
+  68% { opacity: .76; transform: scale(1.003, 1.006); }
+  86% { opacity: .2; transform: scale(1.001, 1.002); }
+}
 
 @media (max-width: 700px) {
   .hero { padding-top: 1rem; }
@@ -96,6 +108,6 @@ a { color: inherit; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .character-frame { animation: none; }
-  .character-frame--1 { opacity: 1; }
-  .character-frame--2 { opacity: 0; }
+  .character-frame--1 { opacity: 1; transform: none; }
+  .character-frame--2 { opacity: 0; transform: none; }
 }
