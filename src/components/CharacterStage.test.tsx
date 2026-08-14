@@ -4,140 +4,74 @@ import { describe, expect, it } from "vitest";
 import { CharacterStage } from "./CharacterStage";
 
 describe("CharacterStage", () => {
-  it("starts with both single and all explanations hidden", () => {
+  it("renders one character experience with two frames and no legacy controls", () => {
     render(<CharacterStage />);
 
-    expect(screen.queryByRole("region", { name: /컨테이너 수호창/ })).not.toBeInTheDocument();
-    expect(document.getElementById("all-equipment-explanations")).not.toBeVisible();
-    expect(screen.getByRole("button", { name: "장비 설명 모두 보기" })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByRole("group", { name: "인터랙티브 캐릭터" })).toBeInTheDocument();
+    expect(screen.getByTestId("character-stage")).toHaveAttribute("data-config", "main-character");
+    expect(document.querySelectorAll(".character-frame")).toHaveLength(2);
+    expect(document.querySelector('[data-frame="idle-a"]')).toHaveAttribute("data-floor-y", "87.5");
+    expect(document.querySelector('[data-frame="idle-a"]')).toHaveStyle({ "--floor-offset": "0%" });
+    expect(document.querySelector('[data-frame="idle-b"]')).toHaveAttribute("data-floor-y", "85.286");
+    expect(document.querySelector('[data-frame="idle-b"]')).toHaveStyle({ "--floor-offset": "-2.214%" });
+    expect(screen.queryByRole("group", { name: /캐릭터 화면 선택/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /장비 보드|캐릭터 A|캐릭터 B|장비 설명 모두 보기/ })).not.toBeInTheDocument();
+    expect(screen.getAllByRole("button").filter((button) => button.classList.contains("equipment-hotspot"))).toHaveLength(2);
   });
 
-  it("opens, switches, and toggles equipment details with native buttons", async () => {
+  it("opens, switches, and toggles glove and shoe placeholder details", async () => {
     const user = userEvent.setup();
     render(<CharacterStage />);
-    const spear = screen.getByRole("button", { name: /컨테이너 수호창/ });
-    const shield = screen.getByRole("button", { name: /구름 기사의 방패/ });
+    const gloves = screen.getByRole("button", { name: /장갑/ });
+    const shoes = screen.getByRole("button", { name: /신발/ });
 
-    expect(spear).toHaveAttribute("aria-expanded", "false");
-    await user.click(spear);
-    expect(spear).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByRole("region", { name: /컨테이너 수호창/ })).toBeVisible();
+    expect(gloves).toHaveAttribute("aria-expanded", "false");
+    await user.click(gloves);
+    expect(gloves).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("region", { name: "장갑" })).toHaveTextContent("설명 준비 중 — 이 문구를 교체하세요.");
 
-    await user.click(shield);
-    expect(spear).toHaveAttribute("aria-expanded", "false");
-    expect(shield).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByRole("region", { name: /구름 기사의 방패/ })).toHaveTextContent("AWS");
+    await user.click(shoes);
+    expect(gloves).toHaveAttribute("aria-expanded", "false");
+    expect(shoes).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("region", { name: "신발" })).toHaveTextContent("편집 가능한 임시 문구");
 
-    await user.click(shield);
-    expect(shield).toHaveAttribute("aria-expanded", "false");
+    await user.click(shoes);
+    expect(shoes).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("supports keyboard selection and matching accessible relationships", async () => {
+    const user = userEvent.setup();
+    render(<CharacterStage />);
+    const gloves = screen.getByRole("button", { name: /장갑/ });
+    gloves.focus();
+    await user.keyboard("{Enter}");
+
+    expect(gloves).toHaveAttribute("aria-expanded", "true");
+    expect(gloves).toHaveAttribute("aria-controls", "equipment-detail-gloves");
+    expect(screen.getByRole("region", { name: "장갑" })).toHaveAttribute("id", "equipment-detail-gloves");
   });
 
   it("closes pinned details with Escape and restores trigger focus", async () => {
     const user = userEvent.setup();
     render(<CharacterStage />);
-    const boots = screen.getByRole("button", { name: /리눅스 여행 부츠/ });
-    await user.click(boots);
+    const shoes = screen.getByRole("button", { name: /신발/ });
+    await user.click(shoes);
     await user.keyboard("{Escape}");
-    expect(boots).toHaveFocus();
-    expect(boots).toHaveAttribute("aria-expanded", "false");
+    expect(shoes).toHaveFocus();
+    expect(shoes).toHaveAttribute("aria-expanded", "false");
   });
 
-  it("closes pinned details on an outside pointer action", async () => {
+  it("closes with its close button and on an outside pointer action", async () => {
     const user = userEvent.setup();
     render(<><CharacterStage /><button>outside</button></>);
-    const armor = screen.getByRole("button", { name: /프라이빗 철갑/ });
-    await user.click(armor);
+    const gloves = screen.getByRole("button", { name: /장갑/ });
+
+    await user.click(gloves);
+    await user.click(screen.getByRole("button", { name: "장갑 설명 닫기" }));
+    expect(gloves).toHaveAttribute("aria-expanded", "false");
+
+    await user.click(gloves);
     await user.click(screen.getByRole("button", { name: "outside" }));
-    expect(armor).toHaveAttribute("aria-expanded", "false");
-  });
-
-  it("shows all six cards, keeps hotspot selection, and hides the list again", async () => {
-    const user = userEvent.setup();
-    render(<CharacterStage />);
-    const spear = screen.getByRole("button", { name: /컨테이너 수호창/ });
-    await user.click(spear);
-
-    const openAll = screen.getByRole("button", { name: "장비 설명 모두 보기" });
-    await user.click(openAll);
-    const panel = screen.getByRole("region", { name: "장비 설명" });
-    expect(panel).toBeVisible();
-    expect(panel.querySelectorAll("article")).toHaveLength(6);
-    expect(spear).toHaveAttribute("aria-expanded", "true");
-
-    const closeAll = screen.getByRole("button", { name: "설명 모두 닫기" });
-    expect(closeAll).toHaveAttribute("aria-pressed", "true");
-    await user.click(closeAll);
-    expect(panel).not.toBeVisible();
-    expect(spear).toHaveAttribute("aria-expanded", "true");
-  });
-
-  it("supports keyboard selection and exposes matching control relationships", async () => {
-    const user = userEvent.setup();
-    render(<CharacterStage />);
-    const cloak = screen.getByRole("button", { name: /설계자의 망토/ });
-    cloak.focus();
-    await user.keyboard("{Enter}");
-
-    expect(cloak).toHaveAttribute("aria-expanded", "true");
-    expect(cloak).toHaveAttribute("aria-controls", "equipment-detail-architect-cloak");
-    expect(screen.getByRole("region", { name: /설계자의 망토/ })).toHaveAttribute("id", "equipment-detail-architect-cloak");
-  });
-
-  it("uses a bounded, single-column all-explanations panel at mobile widths", async () => {
-    const user = userEvent.setup();
-    window.innerWidth = 390;
-    render(<CharacterStage />);
-    await user.click(screen.getByRole("button", { name: "장비 설명 모두 보기" }));
-
-    const panel = screen.getByRole("region", { name: "장비 설명" });
-    expect(panel).toHaveClass("equipment-list-panel");
-    expect(panel.querySelector(".equipment-list")).toBeInTheDocument();
-  });
-
-  it("switches to each portrait with glove and shoe controls", async () => {
-    const user = userEvent.setup();
-    render(<CharacterStage />);
-
-    await user.click(screen.getByRole("button", { name: "캐릭터 A" }));
-    expect(screen.getByTestId("character-stage")).toHaveAttribute("data-config", "portrait-a");
-    expect(screen.getByRole("button", { name: /장갑/ })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /신발/ })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /컨테이너 수호창/ })).not.toBeInTheDocument();
-
-    await user.click(screen.getByRole("button", { name: "캐릭터 B" }));
-    expect(screen.getByTestId("character-stage")).toHaveAttribute("data-config", "portrait-b");
-    expect(screen.getByRole("button", { name: /장갑/ })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /신발/ })).toBeInTheDocument();
-  });
-
-  it("shows editable placeholder copy for glove and shoe selection", async () => {
-    const user = userEvent.setup();
-    render(<CharacterStage />);
-    await user.click(screen.getByRole("button", { name: "캐릭터 A" }));
-
-    await user.click(screen.getByRole("button", { name: /장갑/ }));
-    expect(screen.getByRole("region", { name: "장갑" })).toHaveTextContent("설명 준비 중 — 이 문구를 교체하세요.");
-    await user.click(screen.getByRole("button", { name: /신발/ }));
-    expect(screen.getByRole("region", { name: "신발" })).toHaveTextContent("편집 가능한 임시 문구");
-  });
-
-  it("closes stale portrait details when the visual config changes", async () => {
-    const user = userEvent.setup();
-    render(<CharacterStage />);
-    await user.click(screen.getByRole("button", { name: "캐릭터 A" }));
-    await user.click(screen.getByRole("button", { name: /장갑/ }));
-    expect(screen.getByRole("region", { name: "장갑" })).toBeVisible();
-
-    await user.click(screen.getByRole("button", { name: "캐릭터 B" }));
-    expect(screen.queryByRole("region", { name: "장갑" })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /장갑/ })).toHaveAttribute("aria-expanded", "false");
-  });
-
-  it("keeps the existing six-card control working after a config switch", async () => {
-    const user = userEvent.setup();
-    render(<CharacterStage />);
-    await user.click(screen.getByRole("button", { name: "캐릭터 A" }));
-    await user.click(screen.getByRole("button", { name: "장비 설명 모두 보기" }));
-    expect(screen.getByRole("region", { name: "장비 설명" }).querySelectorAll("article")).toHaveLength(6);
+    expect(gloves).toHaveAttribute("aria-expanded", "false");
   });
 });
