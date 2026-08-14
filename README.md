@@ -8,13 +8,14 @@
 
 - Vite, React, TypeScript, plain CSS
 - 1024×1536 portrait A 한 장을 고정 렌더링하는 단일 캐릭터 hero
+- 원본 PNG를 복제·변형하지 않는 CSS/SVG 픽셀 motion(상체 glow, 망토 breeze, ahoge glint)
 - 창(Kubernetes/Container), 방패(AWS), 장갑(Python), 신발(Linux) percentage hotspot
 - desktop hover, native keyboard Enter/Space, Escape, mobile tap, outside close
 - 별도 tooltip 및 SVG connection layer, mobile viewport-safe bottom card
 - reduced-motion, visible focus, ARIA label/expanded/controls, 하단 semantic sections
 - A/B/장비 보드 selector 없음
 
-전체 portrait frame 교차 전환은 픽셀 가장자리 ghosting과 발 기준선 이동을 피하기 위해 사용하지 않습니다. `character-portrait-b.png`와 기존 장비 보드/데이터는 보존된 참고 자료이며 runtime에는 portrait A만 표시됩니다. 캐릭터 자체의 bobbing도 없습니다.
+전체 portrait frame 교차 전환은 픽셀 가장자리 ghosting과 발 기준선 이동을 피하기 위해 사용하지 않습니다. `character-portrait-b.png`와 기존 장비 보드/데이터는 보존된 참고 자료이며 runtime에는 portrait A만 표시됩니다. 캐릭터 자체의 bobbing도 없습니다. Motion은 pointer 입력을 막지 않는 작은 vector layer에만 적용되며 `prefers-reduced-motion` 환경에서 정지합니다.
 
 ## 로컬 실행과 검증
 
@@ -32,7 +33,7 @@ npm run build
 npm run preview
 ```
 
-Vite production base는 `/My_Character/`입니다. 개발 서버에서 `?motionDebug=1`을 붙이면 현재 static master와 네 hotspot 경계를 확인할 수 있습니다. 이 표시는 production build에서는 활성화되지 않습니다.
+Vite production base는 `/My_Character/`입니다. 개발 서버에서 `?motionDebug=1`을 붙이면 현재 static master, 세 motion layer, 네 hotspot 경계를 확인할 수 있습니다. 이 표시는 production build에서는 활성화되지 않습니다.
 
 ## Asset과 좌표 편집
 

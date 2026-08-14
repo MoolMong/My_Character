@@ -12,9 +12,13 @@ describe("CharacterStage", () => {
     expect(document.querySelectorAll(".character-frame")).toHaveLength(1);
     expect(document.querySelector('[data-frame="idle-a"]')).toHaveAttribute("data-floor-y", "87.5");
     expect(document.querySelector('[data-frame="idle-b"]')).not.toBeInTheDocument();
+    expect(document.querySelectorAll(".character-motion")).toHaveLength(1);
+    expect(document.querySelectorAll(".character-motion image")).toHaveLength(0);
+    expect(document.querySelectorAll("[data-motion-layer]")).toHaveLength(3);
     expect(screen.queryByRole("group", { name: /캐릭터 화면 선택/ })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /장비 보드|캐릭터 A|캐릭터 B|장비 설명 모두 보기/ })).not.toBeInTheDocument();
     expect(screen.getAllByRole("button").filter((button) => button.classList.contains("equipment-hotspot"))).toHaveLength(4);
+    expect(["spear", "shield", "gloves", "shoes"].map((id) => document.querySelector(`[data-equipment="${id}"]`))).not.toContain(null);
   });
 
   it("opens, switches, and toggles equipment details", async () => {

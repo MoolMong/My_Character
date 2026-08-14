@@ -35,6 +35,13 @@ a { color: inherit; }
 .character-scene { position: absolute; inset: 0; overflow: hidden; }
 .character-visual { position: absolute; inset: 0; filter: drop-shadow(8px 10px 0 #080b13aa); }
 .character-frame { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+.character-motion { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; shape-rendering: crispEdges; }
+.torso-breath { transform-box: fill-box; transform-origin: center; animation: torso-breathe 3.6s steps(2, end) infinite; }
+.torso-breath__halo { fill: none; stroke: #f3d78b; stroke-width: .45; opacity: .22; vector-effect: non-scaling-stroke; }
+.torso-breath__spark { fill: #fff1b5; opacity: .38; }
+.cape-breeze { fill: #80b7df; opacity: .42; animation: cape-breeze 2.8s steps(3, end) infinite; }
+.ahoge-glint { fill: #f5cc82; opacity: .5; animation: ahoge-glint 3.2s steps(2, end) infinite; }
+.equipment-explorer[data-motion-debug="true"] .character-motion [data-motion-layer] { opacity: 1; stroke: #57e3ff; stroke-width: 1; }
 
 .hotspot-layer, .connection-layer { position: absolute; inset: 0; width: 100%; height: 100%; }
 .connection-layer { z-index: 8; pointer-events: none; overflow: visible; }
@@ -73,6 +80,9 @@ a { color: inherit; }
 
 @keyframes line-in { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
 @keyframes card-in { from { opacity: 0; transform: translateY(calc(-50% + 7px)); } }
+@keyframes torso-breathe { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+@keyframes cape-breeze { 0%, 100% { transform: translate(0, 0); opacity: .2; } 50% { transform: translate(1.5px, -.5px); opacity: .55; } }
+@keyframes ahoge-glint { 0%, 75%, 100% { opacity: .2; } 82% { opacity: .75; } }
 @media (max-width: 700px) {
   .hero { padding-top: 1rem; }
   .stage-shell { width: min(100%, 68svh); max-height: 68svh; }
@@ -92,4 +102,5 @@ a { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .character-motion [data-motion-layer] { animation: none; }
 }
