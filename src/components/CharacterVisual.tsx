@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import hairAhoge from "../assets/character-hair-ahoge.png";
 import type { CharacterConfig } from "../data/characterConfigs";
 
 function useReducedMotion() {
@@ -28,11 +29,7 @@ export function CharacterVisual({ config, reactionId = null }: { config: Charact
       data-reduced-motion={reducedMotion || undefined}
     >
       <img className="character-master" src={config.baseArtwork} alt="" data-layer="fixed-master" />
-      <img className="motion-layer motion-layer--torso" src={config.baseArtwork} alt="" data-layer="upper-body-breathe" />
-      <img className="motion-layer motion-layer--cape" src={config.baseArtwork} alt="" data-layer="cape-settle" />
-      <img className="motion-layer motion-layer--spear" src={config.baseArtwork} alt="" data-layer="spear-tip-settle" />
-      <img className="motion-layer motion-layer--hair" src={config.baseArtwork} alt="" data-layer="hair-ahoge-sway" />
-      <img className="motion-layer motion-layer--face" src={config.baseArtwork} alt="" data-layer="face-eye-expression" />
+      <img className="hair-ahoge" src={hairAhoge} alt="" data-layer="hair-ahoge-sway" />
       <span className="ground-shadow" data-layer="ground-shadow" data-reacting={reactionId || undefined} />
     </div>
   );

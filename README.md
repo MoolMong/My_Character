@@ -7,7 +7,7 @@
 ## Stack and features
 
 - Vite, React, TypeScript, plain CSS
-- 고정 visual master, 독립적인 local accent와 ground/contact 레이어
+- 고정 visual master, 원본에서 추출한 투명 ahoge sprite와 ground/contact 레이어
 - 데이터 기반 4개 hotspot과 편집 가능한 placeholder 설명
 - desktop hover, keyboard Enter/Space/Escape, mobile tap/outside close
 - 반응형 bottom card, reduced-motion 지원, GitHub Pages workflow
@@ -24,7 +24,15 @@
 
 요청에 언급된 별도 5-frame ZIP은 작업 시점의 저장소와 `src/assets` 어디에도 존재하지 않았습니다. 따라서 없는 frame을 생성하거나 추정하지 않았습니다. 현재 PNG들은 동일한 1024×1536 canvas이지만 reject frame은 translation/scale만으로 정규화할 수 없는 구조 변화가 있어 runtime normalization을 하지 않습니다.
 
-자연스러운 idle은 master와 발을 움직이지 않습니다. 동일한 master를 허리 위 상체/오른쪽 망토 끝/창끝/머리카락·아호게/눈 주변의 좁은 영역으로만 clip한 local layer가 서로 다른 리듬으로 움직입니다. 머리카락은 위쪽 부착점을 축으로 비대칭적인 1–2px 이동과 작은 회전을 `steps()` 타이밍으로 반복하고, 눈 레이어는 드문 짧은 blink/표정 변화를 만듭니다. 상체는 4.4초 동안 3–4px의 분명한 들숨·날숨과 약 1–1.5%의 국소 확대를 거치고, 망토는 부착점을 축으로 5.2초 동안 비대칭적인 2–5px 바람 flutter를 보이며, 창끝은 8.4초의 작은 동반 움직임만 가집니다. contact shadow도 호흡에 맞춰 폭과 농도를 조금 더 바꾸지만 발 기준선은 고정됩니다. 전체 이미지 crossfade나 bobbing은 없습니다. 장갑/신발 선택은 해당 hotspot의 짧은 outline/glow로 반응하며, 신발은 ground ring도 pulse합니다. 장비 reaction 중 local idle은 잠시 멈추며, Reduced motion에서는 local layer와 shadow animation이 정지하지만 고정 master, hotspot과 설명은 유지됩니다.
+자연스러운 idle은 master와 발을 움직이지 않습니다. runtime에서 full master는 정확히 한 번만 렌더링하며, clip된 master 사본은 사용하지 않습니다. 움직이는 유일한 캐릭터 레이어는 원본의 ahoge만 담은 92×112 투명 PNG입니다. 뿌리 부착점을 고정하고 `steps(1, end)`의 5개 정수 상태에서 ±5도 회전하므로 작은 화면에서도 움직임을 알아볼 수 있습니다. 상체·망토·창 레이어는 분리된 원본 asset이 없어 움직일 때 경계가 깨지므로 제거했습니다. face도 안전하게 분리할 수 있는 동일-identity 눈 frame이 없어 overlay를 생략하고 base 얼굴을 그대로 보존합니다. contact shadow는 발 기준선을 바꾸지 않으며, 장갑/신발 선택은 hotspot outline/glow, 신발은 ground ring으로 반응합니다. 장비 reaction 중 ahoge idle은 잠시 멈춥니다. Reduced motion에서는 ahoge overlay를 숨기고 shadow animation도 정지하지만 고정 master, hotspot과 설명은 유지됩니다.
+
+### Generated local asset
+
+`src/assets/character-hair-ahoge.png`는 `src/assets/character-frame-idle.png`의 `(x:456, y:166, width:92, height:112)` 영역에서 생성합니다. `scripts/extract-hair-overlay.mjs`가 crop 경계와 연결된 밝은 배경을 flood 제거하고, crown pixels가 따라오지 않도록 source outline을 따르는 ahoge mask를 적용합니다. 외부 image package는 필요하지 않습니다. 재생성 명령은 다음과 같습니다.
+
+```bash
+npm run assets:hair
+```
 
 ### Motion debug
 

@@ -1,19 +1,19 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
+import { characterConfig } from "../data/characterConfigs";
 import { CharacterStage } from "./CharacterStage";
 
 describe("CharacterStage", () => {
-  it("renders one fixed visual master with local layers and no full-body frame crossfade", () => {
+  it("renders one fixed visual master with a source-derived hair sprite and no duplicated master layers", () => {
     render(<CharacterStage />);
 
     expect(screen.getByRole("group", { name: "인터랙티브 캐릭터" })).toBeInTheDocument();
     expect(screen.getByTestId("character-stage")).toHaveAttribute("data-config", "main-character");
     expect(document.querySelectorAll(".character-master")).toHaveLength(1);
     expect(document.querySelector('[data-layer="fixed-master"]')).toBeInTheDocument();
-    expect(document.querySelector('[data-layer="upper-body-breathe"]')).toBeInTheDocument();
-    expect(document.querySelector('[data-layer="cape-settle"]')).toBeInTheDocument();
-    expect(document.querySelector('[data-layer="spear-tip-settle"]')).toBeInTheDocument();
+    expect(document.querySelector('[data-layer="hair-ahoge-sway"]')).toBeInTheDocument();
+    expect(document.querySelectorAll(`img[src="${characterConfig.baseArtwork}"]`)).toHaveLength(1);
     expect(document.querySelector('[data-layer="ground-shadow"]')).toBeInTheDocument();
     expect(document.querySelectorAll(".character-frame")).toHaveLength(0);
     expect(document.querySelector('[data-frame="breathe"], [data-frame="blink"]')).not.toBeInTheDocument();

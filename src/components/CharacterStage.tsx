@@ -106,7 +106,7 @@ export function CharacterStage() {
               <output className="motion-debug" aria-label="Motion debug data">
                 state: {reactionId ? `reaction:${reactionId}` : "idle"}<br />
                 master: character-frame-idle.png<br />
-                layers: fixed-master, upper-body-breathe, cape-settle, spear-tip-settle, ground-shadow<br />
+                layers: fixed-master, hair-ahoge-sway, ground-shadow<br />
                 offsets: master 0px / baseline {characterConfig.floorY}%
               </output>
             )}
