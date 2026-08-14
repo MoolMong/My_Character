@@ -37,6 +37,8 @@ a { color: inherit; }
 .motion-layer--torso { clip-path: polygon(38% 35.5%, 62% 35.5%, 64.5% 48.5%, 59% 52.5%, 41% 52.5%, 35.5% 48.5%); transform-origin: 50% 52.5%; opacity: .96; animation: torso-breathe 4.4s ease-in-out infinite; }
 .motion-layer--cape { clip-path: polygon(64% 42%, 70% 48%, 88.5% 61%, 87.5% 64.5%, 76% 60.5%, 67% 53%); transform-origin: 66% 47%; opacity: .94; animation: cape-settle 5.2s ease-in-out infinite; }
 .motion-layer--spear { clip-path: polygon(74% 62%, 79% 64.5%, 95.5% 79%, 94.5% 82%, 89% 78.5%, 75% 68%); transform-origin: 75% 65%; opacity: .96; animation: spear-settle 8.4s ease-in-out infinite; }
+.motion-layer--hair { clip-path: polygon(45.5% 11%, 52.5% 11%, 53% 16.5%, 62.5% 18.5%, 66.5% 28.5%, 64% 31.5%, 57% 27%, 43% 27%, 36% 31.5%, 33.5% 28.5%, 37.5% 18.5%, 47% 16.5%); transform-origin: 50% 17%; opacity: .72; animation: hair-ahoge-sway 3.6s steps(6, end) infinite; }
+.motion-layer--face { clip-path: inset(27.5% 42% 66% 42%); transform-origin: 50% 30.5%; opacity: .62; animation: face-eye-expression 5.8s steps(1, end) infinite; }
 .character-visual[data-motion-state="equipment-reaction"] .motion-layer { animation-play-state: paused; }
 .ground-shadow { position: absolute; z-index: 0; left: 32%; right: 29%; bottom: 10.15%; height: 2.8%; border-radius: 50%; background: #050711b3; box-shadow: 0 2px 0 #05071155; transform-origin: center; animation: ground-idle 4.2s steps(4, end) infinite; }
 .ground-shadow[data-reacting="shoes"] { animation: ground-reaction 240ms steps(2, end) both; }
@@ -103,6 +105,20 @@ a { color: inherit; }
   38% { transform: translate(1px, -1px) rotate(.07deg); }
   62% { transform: translate(2px, 0) rotate(.1deg); }
   81% { transform: translate(0, 1px) rotate(-.05deg); }
+}
+@keyframes hair-ahoge-sway {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  18% { transform: translate(1px, 0) rotate(.35deg); }
+  38% { transform: translate(2px, -1px) rotate(.65deg); }
+  58% { transform: translate(-1px, 0) rotate(-.3deg); }
+  76% { transform: translate(-2px, 1px) rotate(-.55deg); }
+  90% { transform: translate(1px, 0) rotate(.2deg); }
+}
+@keyframes face-eye-expression {
+  0%, 86%, 92%, 100% { transform: translate(0, 0) scaleY(1); opacity: .62; }
+  87% { transform: translate(0, 1px) scaleY(.72); opacity: .5; }
+  88%, 89% { transform: translate(0, 2px) scaleY(.18); opacity: .38; }
+  90% { transform: translate(0, 1px) scaleY(.62); opacity: .48; }
 }
 @keyframes ground-idle { 0%, 100% { transform: scaleX(1.02); opacity: .8; } 42%, 58% { transform: scaleX(.92); opacity: .64; } 76% { transform: scaleX(.97); opacity: .72; } }
 @keyframes ground-reaction { 50% { transform: scaleX(1.12); background: #e6b95f70; } }

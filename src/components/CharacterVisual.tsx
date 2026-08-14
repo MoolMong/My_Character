@@ -31,6 +31,8 @@ export function CharacterVisual({ config, reactionId = null }: { config: Charact
       <img className="motion-layer motion-layer--torso" src={config.baseArtwork} alt="" data-layer="upper-body-breathe" />
       <img className="motion-layer motion-layer--cape" src={config.baseArtwork} alt="" data-layer="cape-settle" />
       <img className="motion-layer motion-layer--spear" src={config.baseArtwork} alt="" data-layer="spear-tip-settle" />
+      <img className="motion-layer motion-layer--hair" src={config.baseArtwork} alt="" data-layer="hair-ahoge-sway" />
+      <img className="motion-layer motion-layer--face" src={config.baseArtwork} alt="" data-layer="face-eye-expression" />
       <span className="ground-shadow" data-layer="ground-shadow" data-reacting={reactionId || undefined} />
     </div>
   );
