@@ -16,14 +16,18 @@ describe("CharacterStage", () => {
     expect(document.querySelector('[data-frame="idle-b"]')).toHaveStyle({ "--floor-offset": "-2.214%" });
     expect(screen.queryByRole("group", { name: /캐릭터 화면 선택/ })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /장비 보드|캐릭터 A|캐릭터 B|장비 설명 모두 보기/ })).not.toBeInTheDocument();
-    expect(screen.getAllByRole("button").filter((button) => button.classList.contains("equipment-hotspot"))).toHaveLength(2);
+    expect(screen.getAllByRole("button").filter((button) => button.classList.contains("equipment-hotspot"))).toHaveLength(4);
   });
 
-  it("opens, switches, and toggles glove and shoe placeholder details", async () => {
+  it("opens, switches, and toggles all four equipment placeholder details", async () => {
     const user = userEvent.setup();
     render(<CharacterStage />);
     const gloves = screen.getByRole("button", { name: /장갑/ });
     const shoes = screen.getByRole("button", { name: /신발/ });
+    const spear = screen.getByRole("button", { name: /창/ });
+    const shield = screen.getByRole("button", { name: /방패/ });
+
+    expect([spear, shield, gloves, shoes]).toHaveLength(4);
 
     expect(gloves).toHaveAttribute("aria-expanded", "false");
     await user.click(gloves);
@@ -35,8 +39,14 @@ describe("CharacterStage", () => {
     expect(shoes).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByRole("region", { name: "신발" })).toHaveTextContent("편집 가능한 임시 문구");
 
-    await user.click(shoes);
-    expect(shoes).toHaveAttribute("aria-expanded", "false");
+    await user.click(spear);
+    expect(screen.getByRole("region", { name: "창" })).toHaveTextContent("설명 준비 중 — 이 문구를 교체하세요.");
+
+    await user.click(shield);
+    expect(screen.getByRole("region", { name: "방패" })).toHaveTextContent("편집 가능한 임시 문구");
+
+    await user.click(shield);
+    expect(shield).toHaveAttribute("aria-expanded", "false");
   });
 
   it("supports keyboard selection and matching accessible relationships", async () => {
