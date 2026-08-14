@@ -24,7 +24,7 @@
 
 요청에 언급된 별도 5-frame ZIP은 작업 시점의 저장소와 `src/assets` 어디에도 존재하지 않았습니다. 따라서 없는 frame을 생성하거나 추정하지 않았습니다. 현재 PNG들은 동일한 1024×1536 canvas이지만 reject frame은 translation/scale만으로 정규화할 수 없는 구조 변화가 있어 runtime normalization을 하지 않습니다.
 
-자연스러운 idle은 master와 발을 움직이지 않습니다. 동일한 master를 허리 위 상체/오른쪽 망토 끝/창끝의 좁은 영역으로만 clip한 local layer가 서로 다른 리듬으로 움직입니다. 상체는 4.4초 동안 3–4px의 분명한 들숨·날숨과 약 1–1.5%의 국소 확대를 거치고, 망토는 부착점을 축으로 5.2초 동안 비대칭적인 2–5px 바람 flutter를 보이며, 창끝은 8.4초의 작은 동반 움직임만 가집니다. contact shadow도 호흡에 맞춰 폭과 농도를 조금 더 바꾸지만 발 기준선은 고정됩니다. 전체 이미지 crossfade나 bobbing은 없습니다. 장갑/신발 선택은 해당 hotspot의 짧은 outline/glow로 반응하며, 신발은 ground ring도 pulse합니다. 장비 reaction 중 local idle은 잠시 멈추며, Reduced motion에서는 local layer와 shadow animation이 정지하지만 고정 master, hotspot과 설명은 유지됩니다.
+자연스러운 idle은 master와 발을 움직이지 않습니다. 동일한 master를 허리 위 상체/오른쪽 망토 끝/창끝/머리카락·아호게/눈 주변의 좁은 영역으로만 clip한 local layer가 서로 다른 리듬으로 움직입니다. 머리카락은 위쪽 부착점을 축으로 비대칭적인 1–2px 이동과 작은 회전을 `steps()` 타이밍으로 반복하고, 눈 레이어는 드문 짧은 blink/표정 변화를 만듭니다. 상체는 4.4초 동안 3–4px의 분명한 들숨·날숨과 약 1–1.5%의 국소 확대를 거치고, 망토는 부착점을 축으로 5.2초 동안 비대칭적인 2–5px 바람 flutter를 보이며, 창끝은 8.4초의 작은 동반 움직임만 가집니다. contact shadow도 호흡에 맞춰 폭과 농도를 조금 더 바꾸지만 발 기준선은 고정됩니다. 전체 이미지 crossfade나 bobbing은 없습니다. 장갑/신발 선택은 해당 hotspot의 짧은 outline/glow로 반응하며, 신발은 ground ring도 pulse합니다. 장비 reaction 중 local idle은 잠시 멈추며, Reduced motion에서는 local layer와 shadow animation이 정지하지만 고정 master, hotspot과 설명은 유지됩니다.
 
 ### Motion debug
 
