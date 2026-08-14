@@ -21,6 +21,7 @@ export function CharacterStage() {
   const buttonRefs = useRef(new Map<string, HTMLButtonElement>());
   const reactionTimer = useRef<number | null>(null);
   const active = characterConfig.hotspots.find((item) => item.id === activeId) ?? null;
+  const motionDebug = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("motionDebug") === "1";
 
   const close = useCallback((restoreFocus = false) => {
     const id = activeId;
@@ -78,9 +79,9 @@ export function CharacterStage() {
   return (
     <div className="equipment-explorer" ref={explorerRef} role="group" aria-label="인터랙티브 캐릭터">
       <div className="stage-shell" style={{ aspectRatio: `${characterConfig.width} / ${characterConfig.height}` }}>
-        <div className="character-stage" ref={stageRef} data-testid="character-stage" data-config={characterConfig.id}>
+        <div className="character-stage" ref={stageRef} data-testid="character-stage" data-config={characterConfig.id} data-motion-debug={motionDebug || undefined}>
           <div className="character-scene">
-            <CharacterVisual config={characterConfig} reacting={reactionId !== null} />
+            <CharacterVisual config={characterConfig} reactionId={reactionId} />
             {active && geometry && (
               <ConnectionLine width={geometry.width} height={geometry.height} start={{ x: geometry.width * active.anchor.x / 100, y: geometry.height * active.anchor.y / 100 }} end={geometry.end} />
             )}
@@ -101,6 +102,14 @@ export function CharacterStage() {
                 />
               ))}
             </div>
+            {motionDebug && (
+              <output className="motion-debug" aria-label="Motion debug data">
+                state: {reactionId ? `reaction:${reactionId}` : "idle"}<br />
+                master: character-frame-idle.png<br />
+                layers: fixed-master, local-accent, ground-shadow<br />
+                offsets: master 0px / baseline {characterConfig.floorY}%
+              </output>
+            )}
           </div>
         </div>
         <div className="tooltip-layer" aria-live="polite">

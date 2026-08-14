@@ -4,19 +4,31 @@ import { describe, expect, it } from "vitest";
 import { CharacterStage } from "./CharacterStage";
 
 describe("CharacterStage", () => {
-  it("renders one character experience with base and rare blink frames and no legacy controls", () => {
+  it("renders one fixed visual master with local layers and no full-body frame crossfade", () => {
     render(<CharacterStage />);
 
     expect(screen.getByRole("group", { name: "인터랙티브 캐릭터" })).toBeInTheDocument();
     expect(screen.getByTestId("character-stage")).toHaveAttribute("data-config", "main-character");
-    expect(document.querySelectorAll(".character-frame")).toHaveLength(3);
-    expect(document.querySelector('[data-frame="idle"]')).toHaveAttribute("data-floor-y", "87.5");
-    expect(document.querySelector('[data-frame="idle"]')).toHaveStyle({ "--floor-offset": "0%" });
-    expect(document.querySelector('[data-frame="breathe"]')).toHaveStyle({ "--floor-offset": "0.065%" });
-    expect(document.querySelector('[data-frame="blink"]')).toHaveStyle({ "--floor-offset": "0.195%" });
+    expect(document.querySelectorAll(".character-master")).toHaveLength(1);
+    expect(document.querySelector('[data-layer="fixed-master"]')).toBeInTheDocument();
+    expect(document.querySelector('[data-layer="ground-shadow"]')).toBeInTheDocument();
+    expect(document.querySelectorAll(".character-frame")).toHaveLength(0);
+    expect(document.querySelector('[data-frame="breathe"], [data-frame="blink"]')).not.toBeInTheDocument();
     expect(screen.queryByRole("group", { name: /캐릭터 화면 선택/ })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /장비 보드|캐릭터 A|캐릭터 B|장비 설명 모두 보기/ })).not.toBeInTheDocument();
     expect(screen.getAllByRole("button").filter((button) => button.classList.contains("equipment-hotspot"))).toHaveLength(4);
+  });
+
+  it("shows motion diagnostics only for the explicit debug query", () => {
+    window.history.replaceState({}, "", "/?motionDebug=1");
+    const { unmount } = render(<CharacterStage />);
+    expect(screen.getByTestId("character-stage")).toHaveAttribute("data-motion-debug", "true");
+    expect(screen.getByRole("status", { name: "Motion debug data" })).toHaveTextContent("fixed-master");
+    unmount();
+
+    window.history.replaceState({}, "", "/");
+    render(<CharacterStage />);
+    expect(screen.queryByRole("status", { name: "Motion debug data" })).not.toBeInTheDocument();
   });
 
   it("opens, switches, and toggles all four equipment placeholder details", async () => {

@@ -1,75 +1,64 @@
 import { useEffect, useState } from "react";
-import type { CSSProperties } from "react";
 import type { CharacterConfig } from "../data/characterConfigs";
 
-type IdlePhase = "idle" | "inhale" | "settle";
+type Accent = "none" | "clasp" | "spear";
 
-const phases: { phase: IdlePhase; frame: "idle" | "breathe"; min: number; variance: number }[] = [
-  { phase: "idle", frame: "idle", min: 720, variance: 420 },
-  { phase: "inhale", frame: "breathe", min: 210, variance: 90 },
-  { phase: "settle", frame: "idle", min: 320, variance: 150 },
-  { phase: "inhale", frame: "breathe", min: 180, variance: 80 },
-  { phase: "idle", frame: "idle", min: 820, variance: 480 },
-];
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
 
-function prefersReducedMotion() {
-  return typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReduced(query.matches);
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  return reduced;
 }
 
-export function CharacterVisual({ config, reacting = false }: { config: CharacterConfig; reacting?: boolean }) {
-  const [phaseIndex, setPhaseIndex] = useState(0);
-  const [blinking, setBlinking] = useState(false);
-  const reducedMotion = prefersReducedMotion();
+export function CharacterVisual({ config, reactionId = null }: { config: CharacterConfig; reactionId?: string | null }) {
+  const [accent, setAccent] = useState<Accent>("none");
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (reducedMotion || reacting) {
-      setBlinking(false);
+    if (reducedMotion || reactionId) {
+      setAccent("none");
       return;
     }
-    const phase = phases[phaseIndex];
-    const timer = window.setTimeout(
-      () => setPhaseIndex((current) => (current + 1) % phases.length),
-      phase.min + Math.random() * phase.variance,
-    );
-    return () => window.clearTimeout(timer);
-  }, [phaseIndex, reacting, reducedMotion]);
 
-  useEffect(() => {
-    if (reducedMotion || reacting) return;
-    let blinkTimer = 0;
-    let restoreTimer = 0;
+    let eventTimer = 0;
+    let clearTimer = 0;
     const schedule = () => {
-      blinkTimer = window.setTimeout(() => {
-        setBlinking(true);
-        restoreTimer = window.setTimeout(() => {
-          setBlinking(false);
+      eventTimer = window.setTimeout(() => {
+        setAccent(Math.random() < 0.58 ? "clasp" : "spear");
+        clearTimer = window.setTimeout(() => {
+          setAccent("none");
           schedule();
-        }, 105 + Math.random() * 35);
-      }, 3500 + Math.random() * 3500);
+        }, 150);
+      }, 5200 + Math.random() * 7400);
     };
     schedule();
     return () => {
-      window.clearTimeout(blinkTimer);
-      window.clearTimeout(restoreTimer);
+      window.clearTimeout(eventTimer);
+      window.clearTimeout(clearTimer);
     };
-  }, [reacting, reducedMotion]);
-
-  const visibleFrame = blinking ? "blink" : phases[phaseIndex].frame;
+  }, [reactionId, reducedMotion]);
 
   return (
-    <div className="character-visual" aria-hidden="true" data-floor-y={config.floorY} data-phase={phases[phaseIndex].phase} data-reacting={reacting || undefined}>
-      {config.frames.map((frame) => (
-        <img
-          key={frame.id}
-          className="character-frame"
-          src={frame.artwork}
-          alt=""
-          data-frame={frame.id}
-          data-active={visibleFrame === frame.id || undefined}
-          data-floor-y={frame.floorY}
-          style={{ "--floor-offset": `${Number((frame.floorY - config.floorY).toFixed(3))}%` } as CSSProperties}
-        />
-      ))}
+    <div
+      className="character-visual"
+      aria-hidden="true"
+      data-floor-y={config.floorY}
+      data-motion-state={reactionId ? "equipment-reaction" : "idle"}
+      data-accent={accent}
+      data-reduced-motion={reducedMotion || undefined}
+    >
+      <img className="character-master" src={config.baseArtwork} alt="" data-layer="fixed-master" />
+      <span className="local-accent local-accent--clasp" data-layer="clasp-pixel" />
+      <span className="local-accent local-accent--spear" data-layer="spear-pixel" />
+      <span className="ground-shadow" data-layer="ground-shadow" data-reacting={reactionId || undefined} />
     </div>
   );
 }

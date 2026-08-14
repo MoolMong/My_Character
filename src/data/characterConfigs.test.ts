@@ -2,14 +2,11 @@ import { describe, expect, it } from "vitest";
 import { characterConfig, validateCharacterConfig } from "./characterConfigs";
 
 describe("character config data", () => {
-  it("defines one character with floor-aligned base and blink frames", () => {
+  it("defines one character with one immutable visual master", () => {
     expect(() => validateCharacterConfig(characterConfig)).not.toThrow();
     expect(characterConfig.id).toBe("main-character");
-    expect(characterConfig.frames.map(({ id }) => id)).toEqual(["idle", "breathe", "blink"]);
-    expect(characterConfig.frames).toHaveLength(3);
+    expect(characterConfig.baseArtwork).toContain("character-frame-idle");
     expect(characterConfig.floorY).toBe(87.5);
-    expect(characterConfig.frames.map(({ floorY }) => floorY)).toEqual([87.5, 87.565, 87.695]);
-    expect(characterConfig.frames.map(({ role }) => role)).toEqual(["base", "base", "blink"]);
     expect(characterConfig.width / characterConfig.height).toBeCloseTo(2 / 3);
   });
 
