@@ -1,48 +1,29 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { characterConfig } from "../data/characterConfigs";
 import { CharacterStage } from "./CharacterStage";
 
 describe("CharacterStage", () => {
-  it("renders one fixed visual master with a source-derived hair sprite and no duplicated master layers", () => {
+  it("renders one character experience with two frames and no legacy controls", () => {
     render(<CharacterStage />);
 
     expect(screen.getByRole("group", { name: "인터랙티브 캐릭터" })).toBeInTheDocument();
     expect(screen.getByTestId("character-stage")).toHaveAttribute("data-config", "main-character");
-    expect(document.querySelectorAll(".character-master")).toHaveLength(1);
-    expect(document.querySelector('[data-layer="fixed-master"]')).toBeInTheDocument();
-    expect(document.querySelector('[data-layer="hair-ahoge-sway"]')).toBeInTheDocument();
-    expect(document.querySelectorAll(`img[src="${characterConfig.baseArtwork}"]`)).toHaveLength(1);
-    expect(document.querySelector('[data-layer="ground-shadow"]')).toBeInTheDocument();
-    expect(document.querySelectorAll(".character-frame")).toHaveLength(0);
-    expect(document.querySelector('[data-frame="breathe"], [data-frame="blink"]')).not.toBeInTheDocument();
+    expect(document.querySelectorAll(".character-frame")).toHaveLength(2);
+    expect(document.querySelector('[data-frame="idle-a"]')).toHaveAttribute("data-floor-y", "87.5");
+    expect(document.querySelector('[data-frame="idle-a"]')).toHaveStyle({ "--floor-offset": "0%" });
+    expect(document.querySelector('[data-frame="idle-b"]')).toHaveAttribute("data-floor-y", "85.286");
+    expect(document.querySelector('[data-frame="idle-b"]')).toHaveStyle({ "--floor-offset": "-2.214%" });
     expect(screen.queryByRole("group", { name: /캐릭터 화면 선택/ })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /장비 보드|캐릭터 A|캐릭터 B|장비 설명 모두 보기/ })).not.toBeInTheDocument();
-    expect(screen.getAllByRole("button").filter((button) => button.classList.contains("equipment-hotspot"))).toHaveLength(4);
+    expect(screen.getAllByRole("button").filter((button) => button.classList.contains("equipment-hotspot"))).toHaveLength(2);
   });
 
-  it("shows motion diagnostics only for the explicit debug query", () => {
-    window.history.replaceState({}, "", "/?motionDebug=1");
-    const { unmount } = render(<CharacterStage />);
-    expect(screen.getByTestId("character-stage")).toHaveAttribute("data-motion-debug", "true");
-    expect(screen.getByRole("status", { name: "Motion debug data" })).toHaveTextContent("fixed-master");
-    unmount();
-
-    window.history.replaceState({}, "", "/");
-    render(<CharacterStage />);
-    expect(screen.queryByRole("status", { name: "Motion debug data" })).not.toBeInTheDocument();
-  });
-
-  it("opens, switches, and toggles all four equipment placeholder details", async () => {
+  it("opens, switches, and toggles glove and shoe placeholder details", async () => {
     const user = userEvent.setup();
     render(<CharacterStage />);
     const gloves = screen.getByRole("button", { name: /장갑/ });
     const shoes = screen.getByRole("button", { name: /신발/ });
-    const spear = screen.getByRole("button", { name: /창/ });
-    const shield = screen.getByRole("button", { name: /방패/ });
-
-    expect([spear, shield, gloves, shoes]).toHaveLength(4);
 
     expect(gloves).toHaveAttribute("aria-expanded", "false");
     await user.click(gloves);
@@ -54,14 +35,8 @@ describe("CharacterStage", () => {
     expect(shoes).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByRole("region", { name: "신발" })).toHaveTextContent("편집 가능한 임시 문구");
 
-    await user.click(spear);
-    expect(screen.getByRole("region", { name: "창" })).toHaveTextContent("설명 준비 중 — 이 문구를 교체하세요.");
-
-    await user.click(shield);
-    expect(screen.getByRole("region", { name: "방패" })).toHaveTextContent("편집 가능한 임시 문구");
-
-    await user.click(shield);
-    expect(shield).toHaveAttribute("aria-expanded", "false");
+    await user.click(shoes);
+    expect(shoes).toHaveAttribute("aria-expanded", "false");
   });
 
   it("supports keyboard selection and matching accessible relationships", async () => {

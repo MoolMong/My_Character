@@ -5,7 +5,6 @@ type Props = {
   item: EquipmentItem;
   subtle?: boolean;
   active: boolean;
-  reacting?: boolean;
   buttonRef: Ref<HTMLButtonElement>;
   onFocus: () => void;
   onBlur: () => void;
@@ -14,7 +13,7 @@ type Props = {
   onClick: () => void;
 };
 
-export function EquipmentHotspot({ item, subtle = false, active, reacting = false, buttonRef, ...events }: Props) {
+export function EquipmentHotspot({ item, subtle = false, active, buttonRef, ...events }: Props) {
   const style = { "--x": `${item.hitbox.x}%`, "--y": `${item.hitbox.y}%`, "--w": `${item.hitbox.width}%`, "--h": `${item.hitbox.height}%` } as CSSProperties;
   return (
     <button
@@ -26,7 +25,6 @@ export function EquipmentHotspot({ item, subtle = false, active, reacting = fals
       aria-expanded={active}
       aria-controls={`equipment-detail-${item.id}`}
       data-equipment={item.id}
-      data-reacting={reacting || undefined}
       {...events}
     ><span aria-hidden="true" /></button>
   );
