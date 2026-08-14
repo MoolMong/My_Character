@@ -1,4 +1,4 @@
-import portraitAArtwork from "../assets/character-portrait-a.png";
+import portraitAArtwork from "../assets/character-portrait-a-cutout.png";
 import type { EquipmentItem } from "./equipment";
 import { validateEquipment } from "./equipment";
 
