@@ -14,24 +14,24 @@ describe("CharacterStage", () => {
     expect(document.querySelector('[data-frame="idle-b"]')).not.toBeInTheDocument();
     expect(screen.queryByRole("group", { name: /캐릭터 화면 선택/ })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /장비 보드|캐릭터 A|캐릭터 B|장비 설명 모두 보기/ })).not.toBeInTheDocument();
-    expect(screen.getAllByRole("button").filter((button) => button.classList.contains("equipment-hotspot"))).toHaveLength(2);
+    expect(screen.getAllByRole("button").filter((button) => button.classList.contains("equipment-hotspot"))).toHaveLength(4);
   });
 
-  it("opens, switches, and toggles glove and shoe placeholder details", async () => {
+  it("opens, switches, and toggles equipment details", async () => {
     const user = userEvent.setup();
     render(<CharacterStage />);
     const gloves = screen.getByRole("button", { name: /장갑/ });
-    const shoes = screen.getByRole("button", { name: /신발/ });
+    const shoes = screen.getByRole("button", { name: /부츠/ });
 
     expect(gloves).toHaveAttribute("aria-expanded", "false");
     await user.click(gloves);
     expect(gloves).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByRole("region", { name: "장갑" })).toHaveTextContent("설명 준비 중 — 이 문구를 교체하세요.");
+    expect(screen.getByRole("region", { name: "닳고닳은 파이썬 장갑" })).toHaveTextContent("Python");
 
     await user.click(shoes);
     expect(gloves).toHaveAttribute("aria-expanded", "false");
     expect(shoes).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByRole("region", { name: "신발" })).toHaveTextContent("편집 가능한 임시 문구");
+    expect(screen.getByRole("region", { name: "리눅스 여행 부츠" })).toHaveTextContent("Linux");
 
     await user.click(shoes);
     expect(shoes).toHaveAttribute("aria-expanded", "false");
@@ -46,13 +46,13 @@ describe("CharacterStage", () => {
 
     expect(gloves).toHaveAttribute("aria-expanded", "true");
     expect(gloves).toHaveAttribute("aria-controls", "equipment-detail-gloves");
-    expect(screen.getByRole("region", { name: "장갑" })).toHaveAttribute("id", "equipment-detail-gloves");
+    expect(screen.getByRole("region", { name: "닳고닳은 파이썬 장갑" })).toHaveAttribute("id", "equipment-detail-gloves");
   });
 
   it("closes pinned details with Escape and restores trigger focus", async () => {
     const user = userEvent.setup();
     render(<CharacterStage />);
-    const shoes = screen.getByRole("button", { name: /신발/ });
+    const shoes = screen.getByRole("button", { name: /부츠/ });
     await user.click(shoes);
     await user.keyboard("{Escape}");
     expect(shoes).toHaveFocus();
@@ -65,7 +65,7 @@ describe("CharacterStage", () => {
     const gloves = screen.getByRole("button", { name: /장갑/ });
 
     await user.click(gloves);
-    await user.click(screen.getByRole("button", { name: "장갑 설명 닫기" }));
+    await user.click(screen.getByRole("button", { name: "닳고닳은 파이썬 장갑 설명 닫기" }));
     expect(gloves).toHaveAttribute("aria-expanded", "false");
 
     await user.click(gloves);

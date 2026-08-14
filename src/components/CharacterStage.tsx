@@ -19,6 +19,7 @@ export function CharacterStage() {
   const tooltipRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef(new Map<string, HTMLButtonElement>());
   const active = characterConfig.hotspots.find((item) => item.id === activeId) ?? null;
+  const motionDebug = import.meta.env.DEV && new URLSearchParams(window.location.search).get("motionDebug") === "1";
 
   const close = useCallback((restoreFocus = false) => {
     const id = activeId;
@@ -67,7 +68,8 @@ export function CharacterStage() {
   }, [active, measure]);
 
   return (
-    <div className="equipment-explorer" ref={explorerRef} role="group" aria-label="인터랙티브 캐릭터">
+    <div className="equipment-explorer" ref={explorerRef} role="group" aria-label="인터랙티브 캐릭터" data-motion-debug={motionDebug || undefined}>
+      {motionDebug && <p className="debug-label" aria-hidden="true">motion debug · static master · floor {characterConfig.floorY}%</p>}
       <div className="stage-shell" style={{ aspectRatio: `${characterConfig.width} / ${characterConfig.height}` }}>
         <div className="character-stage" ref={stageRef} data-testid="character-stage" data-config={characterConfig.id}>
           <div className="character-scene">

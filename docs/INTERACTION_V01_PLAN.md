@@ -1,5 +1,7 @@
 # Interaction v0.1 implementation plan
 
+> 상태 메모 (2026-08-14): 이 문서는 두 frame motion 실험 전 작성된 역사적 계획입니다. 현재 runtime은 품질 안정성을 위해 portrait A만 고정 렌더링하며 창·방패·장갑·신발 네 hotspot을 제공합니다. `README.md`가 현행 동작을 설명합니다.
+
 ## Pass boundary
 
 This plan was approved for implementation. Runtime changes follow the structure

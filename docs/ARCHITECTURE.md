@@ -1,5 +1,7 @@
 # My_Character MVP Architecture
 
+> 상태 메모 (2026-08-14): 아래 내용은 최초 board 구현의 역사적 설계입니다. 현재 runtime은 `characterConfigs.ts`의 4-item portrait map과 portrait A 단일 frame을 사용하며, full-frame animation과 character bobbing은 사용하지 않습니다. 실제 구조와 편집 절차는 `README.md`를 우선합니다.
+
 ## Technical baseline
 
 - Vite

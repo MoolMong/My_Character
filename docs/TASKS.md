@@ -1,5 +1,7 @@
 # My_Character MVP Task Plan
 
+> 상태 메모 (2026-08-14): 완료 여부를 나타내는 현행 체크리스트가 아니라 최초 MVP의 역사적 작업 계획입니다. 현재 구현은 `.hermes/GOAL.md`와 `README.md`의 단일 portrait/4-hotspot 범위를 따릅니다.
+
 > Current asset update: `character-v1.png` supersedes the original CSS-fallback decision below. It is now the isolated hero renderer; `character-v0.png` remains a reference. The historical pass checklist is retained for implementation context.
 
 This plan governs the later implementation and review passes. Check tasks only after they are completed and verified. Codex must not commit or push; Hermes owns repository creation, Git history, and live Pages verification.

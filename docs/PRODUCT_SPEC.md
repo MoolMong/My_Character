@@ -1,5 +1,7 @@
 # My_Character MVP Product Specification
 
+> 상태 메모 (2026-08-14): 이 문서는 최초 6-item board MVP의 역사적 제품 명세입니다. 현재 runtime의 authoritative 범위는 `README.md`와 `.hermes/GOAL.md`이며, 단일 static portrait와 창·방패·장갑·신발 네 hotspot을 사용합니다. 아래의 6-item, board, idle movement 문구는 현재 동작을 설명하지 않습니다.
+
 ## Product goal
 
 Build a public-facing, character-centered portfolio MVP for an infrastructure/cloud engineer. The first screen should feel like a restrained pixel-art RPG character inspection screen: visitors discover six engineering strengths by interacting with equipment on the character. The MVP validates the interaction model, accessibility, responsive behavior, and deployment pipeline; it is not a finished personal portfolio or final illustration.
