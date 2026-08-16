@@ -2,3 +2,4 @@ round	stage	functional	visual	motion	responsive	regression	performance	overall	s
 0	baseline	90	58	0	92	100	96	58	FAIL	Motion reported insufficient/unstable; current baseline after rollback
 1	five-frame-worker	100	92	96	88	100	90	94	REPAIR	Five unique discrete raster frames passed invariants/tests/build; landscape tooltip overlapped character
 2	landscape-repair	100	96	96	100	100	90	97	PASS	Desktop/portrait/landscape/reduced-motion Playwright 4/4 PASS; fixed floor and one-visible-frame verified
+3	board-replacement	100	98	100	100	100	96	99	PASS	New 1122x1402 composed board is sole runtime art; static no-ghost rendering, four accessible hotspots, external detail panel, Playwright 4/4 and fresh verifier PASS

@@ -1,25 +1,19 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { characterConfig } from "../data/characterConfigs";
 import { useFinePointer } from "../hooks/useFinePointer";
 import { CharacterVisual } from "./CharacterVisual";
-import { ConnectionLine } from "./ConnectionLine";
 import { EquipmentHotspot } from "./EquipmentHotspot";
 import { EquipmentTooltip } from "./EquipmentTooltip";
 
 type Mode = "hover" | "focus" | "pinned" | null;
-type Geometry = { width: number; height: number; end: { x: number; y: number } };
-
 export function CharacterStage() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>(null);
-  const [geometry, setGeometry] = useState<Geometry | null>(null);
   const finePointer = useFinePointer();
   const explorerRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
-  const tooltipRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef(new Map<string, HTMLButtonElement>());
   const active = characterConfig.hotspots.find((item) => item.id === activeId) ?? null;
-  const motionDebug = import.meta.env.DEV && new URLSearchParams(window.location.search).get("motionDebug") === "1";
+  const hotspotDebug = import.meta.env.DEV && new URLSearchParams(window.location.search).get("motionDebug") === "1";
 
   const close = useCallback((restoreFocus = false) => {
     const id = activeId;
@@ -49,34 +43,13 @@ export function CharacterStage() {
     };
   }, [activeId, close, mode]);
 
-  const measure = useCallback(() => {
-    if (!active || !stageRef.current || !tooltipRef.current) { setGeometry(null); return; }
-    const stage = stageRef.current.getBoundingClientRect();
-    const tip = tooltipRef.current.getBoundingClientRect();
-    const edgeX = active.tooltipSide === "left" ? tip.right : tip.left;
-    setGeometry({ width: stage.width, height: stage.height, end: { x: edgeX - stage.left, y: tip.top + tip.height / 2 - stage.top } });
-  }, [active]);
-
-  useLayoutEffect(() => {
-    measure();
-    if (!active || !stageRef.current || !tooltipRef.current) return;
-    const observer = new ResizeObserver(measure);
-    observer.observe(stageRef.current);
-    observer.observe(tooltipRef.current);
-    window.addEventListener("resize", measure);
-    return () => { observer.disconnect(); window.removeEventListener("resize", measure); };
-  }, [active, measure]);
-
   return (
-    <div className="equipment-explorer" ref={explorerRef} role="group" aria-label="인터랙티브 캐릭터" data-motion-debug={motionDebug || undefined}>
-      {motionDebug && <p className="debug-label" aria-hidden="true">motion debug · five-frame stepped idle</p>}
+    <div className="equipment-explorer" ref={explorerRef} role="group" aria-label="인터랙티브 캐릭터 장비 보드" data-hotspot-debug={hotspotDebug || undefined}>
+      {hotspotDebug && <p className="debug-label" aria-hidden="true">hotspot debug · static board</p>}
       <div className="stage-shell" style={{ aspectRatio: `${characterConfig.width} / ${characterConfig.height}` }}>
-        <div className="character-stage" ref={stageRef} data-testid="character-stage" data-config={characterConfig.id}>
+        <div className="character-stage" data-testid="character-stage" data-config={characterConfig.id}>
           <div className="character-scene">
-            <CharacterVisual config={characterConfig} debug={motionDebug} />
-            {active && geometry && (
-              <ConnectionLine width={geometry.width} height={geometry.height} start={{ x: geometry.width * active.anchor.x / 100, y: geometry.height * active.anchor.y / 100 }} end={geometry.end} />
-            )}
+            <CharacterVisual config={characterConfig} />
             <div className="hotspot-layer">
               {characterConfig.hotspots.map((item) => (
                 <EquipmentHotspot
@@ -95,9 +68,9 @@ export function CharacterStage() {
             </div>
           </div>
         </div>
-        <div className="tooltip-layer" aria-live="polite">
-          {active && <EquipmentTooltip ref={tooltipRef} item={active} onClose={() => close(mode === "pinned")} />}
-        </div>
+      </div>
+      <div className="equipment-detail-slot" aria-live="polite">
+        {active && <EquipmentTooltip item={active} onClose={() => close(mode === "pinned")} />}
       </div>
     </div>
   );

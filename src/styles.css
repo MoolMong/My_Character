@@ -29,22 +29,14 @@ a { color: inherit; }
 
 .equipment-explorer { position: relative; width: 100%; min-width: 0; }
 .debug-label { position: absolute; z-index: 30; inset: .5rem auto auto .5rem; margin: 0; padding: .35rem .5rem; color: #10131d; background: #f3e9d1; font-size: .65rem; }
-.equipment-explorer[data-motion-debug="true"] .equipment-hotspot span { border-color: #57e3ff; background: #57e3ff18; }
-.stage-shell { position: relative; width: min(94vw, 42rem, 76vh); width: min(94vw, 42rem, 76svh); min-width: 0; max-height: 76svh; margin: 0 auto; }
+.equipment-explorer[data-hotspot-debug="true"] .equipment-hotspot span { border-color: #57e3ff; background: #57e3ff18; }
+.stage-shell { position: relative; width: min(94vw, 52rem, calc(72vh * 1122 / 1402)); width: min(94vw, 52rem, calc(72svh * 1122 / 1402)); min-width: 0; margin: 0 auto; background: #fbf3df; box-shadow: 10px 12px 0 #080b1366; }
 .character-stage { position: absolute; inset: 0; }
 .character-scene { position: absolute; inset: 0; overflow: hidden; }
-.character-visual { position: absolute; inset: 0; filter: drop-shadow(8px 10px 0 #080b13aa); }
-.character-frame { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
-.character-frame[hidden] { display: none; }
-.frame-debug { position: absolute; z-index: 3; left: 50%; bottom: 12.5%; translate: -50% 0; padding: .2rem .35rem; color: #10131d; background: #57e3ff; font-size: .58rem; white-space: nowrap; }
-.equipment-explorer[data-motion-debug="true"] .character-visual::after { content: ""; position: absolute; z-index: 3; left: 8%; right: 8%; top: 87.5%; border-top: 1px dashed #57e3ff; }
+.character-visual { position: absolute; inset: 0; }
+.character-board { display: block; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; user-select: none; }
 
-.hotspot-layer, .connection-layer { position: absolute; inset: 0; width: 100%; height: 100%; }
-.connection-layer { z-index: 8; pointer-events: none; overflow: visible; }
-.connection-line, .connection-shadow { fill: none; stroke-linecap: square; stroke-linejoin: bevel; vector-effect: non-scaling-stroke; }
-.connection-shadow { stroke: #080b13; stroke-width: 6; }
-.connection-line { stroke: var(--gold); stroke-width: 2; stroke-dasharray: 1000; animation: line-in 300ms ease-out both; }
-.anchor-dot { fill: var(--gold); stroke: var(--ink); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.hotspot-layer { position: absolute; inset: 0; width: 100%; height: 100%; }
 .hotspot-layer { z-index: 10; }
 .equipment-hotspot { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); min-width: 24px; min-height: 24px; padding: 0; border: 0; background: transparent; cursor: crosshair; touch-action: manipulation; }
 .equipment-hotspot span { position: absolute; inset: 2px; border: 2px dashed transparent; transition: border-color 160ms, background 160ms, box-shadow 160ms; }
@@ -55,13 +47,11 @@ a { color: inherit; }
 .equipment-hotspot--subtle span { inset: 8%; border: 1px solid transparent; border-radius: 45%; }
 .equipment-hotspot--subtle:hover span, .equipment-hotspot--subtle[aria-expanded="true"] span { border-color: #ffe5a8cc; background: #e6b95f14; box-shadow: 0 0 12px 4px #e6b95f55; }
 
-.tooltip-layer { position: absolute; inset: 0; z-index: 20; pointer-events: none; }
-.equipment-tooltip { position: absolute; top: 48%; width: clamp(220px, 28%, 280px); padding: 1.2rem 1.15rem 1.1rem; color: var(--ink); background: var(--paper); border: 4px solid var(--border); box-shadow: 7px 7px 0 #080b13; transform: translateY(-50%); pointer-events: auto; animation: card-in 220ms ease-out both; }
-.equipment-tooltip::before { content: ""; position: absolute; inset: 5px; border: 1px solid #9c8e72; pointer-events: none; }
-.equipment-tooltip.side-left { left: 0; }.equipment-tooltip.side-right { right: 0; }
-.equipment-tooltip h2 { position: relative; margin: .25rem 1.25rem .65rem 0; font-family: Georgia, serif; font-size: 1.2rem; line-height: 1.25; }
-.equipment-tooltip p { position: relative; margin: 0; font-family: system-ui, sans-serif; line-height: 1.55; font-size: .88rem; }
-.equipment-tooltip .technology { color: var(--blue-dark); font: 700 .68rem/1.2 ui-monospace, monospace; letter-spacing: .05em; text-transform: uppercase; }
+.equipment-detail-slot { width: min(94vw, 52rem); min-height: 4.25rem; margin: .55rem auto 0; }
+.equipment-detail { position: relative; display: grid; grid-template-columns: minmax(8rem, auto) 1fr; align-items: center; gap: .15rem 1rem; min-height: 4.25rem; padding: .65rem 3rem .65rem .9rem; color: var(--ink); background: #f3e9d1; border: 2px solid var(--border); box-shadow: 4px 4px 0 #080b13; animation: detail-in 160ms ease-out both; }
+.equipment-detail h2 { margin: 0; font: 700 .9rem/1.3 Georgia, serif; }
+.equipment-detail p { grid-column: 2; margin: 0; font-family: system-ui, sans-serif; line-height: 1.35; font-size: .78rem; }
+.equipment-detail .technology { grid-column: 1; grid-row: 1 / span 2; color: var(--blue-dark); font: 700 .68rem/1.3 ui-monospace, monospace; letter-spacing: .04em; text-transform: uppercase; }
 .tooltip-close { position: absolute; z-index: 2; right: .65rem; top: .5rem; width: 2rem; height: 2rem; border: 0; background: transparent; color: var(--ink); font-size: 1.5rem; cursor: pointer; }
 .tooltip-close:focus-visible { outline: 3px solid var(--blue-dark); }
 .instruction { margin: .1rem auto; color: var(--paper-muted); text-align: center; font-size: .72rem; letter-spacing: .04em; }
@@ -74,25 +64,25 @@ a { color: inherit; }
 .content-section h2 { margin: 0 0 1rem; font: clamp(2.2rem, 6vw, 4.8rem)/1 Georgia, serif; letter-spacing: -.04em; }
 .content-section div > p { max-width: 38rem; margin: 0; color: #4d4b48; font-family: system-ui, sans-serif; line-height: 1.8; }
 
-@keyframes line-in { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
-@keyframes card-in { from { opacity: 0; transform: translateY(calc(-50% + 7px)); } }
+@keyframes detail-in { from { opacity: 0; transform: translateY(4px); } }
 @media (max-width: 700px) {
   .hero { padding-top: 1rem; }
-  .stage-shell { width: min(100%, 68svh); max-height: 68svh; }
-  .connection-layer { display: none; }
-  .tooltip-layer { position: fixed; inset: auto max(.75rem, env(safe-area-inset-right)) max(.75rem, env(safe-area-inset-bottom)) max(.75rem, env(safe-area-inset-left)); }
-  .equipment-tooltip { position: relative; inset: auto !important; width: 100%; max-height: min(40vh, 19rem); overflow: auto; transform: none; animation-name: mobile-card-in; }
+  .stage-shell { width: min(100%, 64svh); }
+  .equipment-detail-slot { width: min(100%, 64svh); min-height: 3.8rem; }
+  .equipment-detail { grid-template-columns: 1fr; gap: .1rem; min-height: 3.8rem; padding-block: .45rem; }
+  .equipment-detail .technology, .equipment-detail h2, .equipment-detail p { grid-column: 1; grid-row: auto; }
+  .equipment-detail p { font-size: .7rem; }
   .desktop-instruction { display: none; }.touch-instruction { display: inline; }
   .content-section { grid-template-columns: 2.5rem 1fr; }
 }
 @media (max-height: 500px) and (orientation: landscape) {
   .hero { min-height: 100svh; padding-block: .5rem; }
-  .stage-shell { width: min(42vw, 76svh); max-height: 76svh; }
-  .equipment-tooltip.side-left { left: auto; right: calc(100% + .75rem); }
-  .equipment-tooltip.side-right { right: auto; left: calc(100% + .75rem); }
+  .stage-shell { width: min(34vw, 64svh); }
+  .equipment-detail-slot { position: absolute; left: calc(50% + min(17vw, 32svh) + .75rem); top: 50%; width: min(30vw, 18rem); min-height: 0; transform: translateY(-50%); }
+  .equipment-detail { grid-template-columns: 1fr; gap: .15rem; min-height: 0; padding-block: .55rem; }
+  .equipment-detail .technology, .equipment-detail h2, .equipment-detail p { grid-column: 1; grid-row: auto; }
   .scroll-cue { margin-top: .35rem; }
 }
-@keyframes mobile-card-in { from { opacity: 0; transform: translateY(7px); } }
 @media (hover: none), (pointer: coarse) { .desktop-instruction { display: none; }.touch-instruction { display: inline; } }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

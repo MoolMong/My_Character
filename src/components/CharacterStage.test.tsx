@@ -4,18 +4,15 @@ import { describe, expect, it } from "vitest";
 import { CharacterStage } from "./CharacterStage";
 
 describe("CharacterStage", () => {
-  it("renders five floor-aligned frames with exactly one visible and no legacy controls", () => {
+  it("renders one static composed board with four mapped hotspots and no legacy runtime", () => {
     render(<CharacterStage />);
 
-    expect(screen.getByRole("group", { name: "인터랙티브 캐릭터" })).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "인터랙티브 캐릭터 장비 보드" })).toBeInTheDocument();
     expect(screen.getByTestId("character-stage")).toHaveAttribute("data-config", "main-character");
-    const frames = [...document.querySelectorAll<HTMLImageElement>(".character-frame")];
-    expect(frames).toHaveLength(5);
-    expect(frames.map((frame) => frame.dataset.frame)).toEqual(["neutral", "inhale", "peak", "exhale", "settle"]);
-    expect(frames.every((frame) => frame.dataset.floorY === "87.5")).toBe(true);
-    expect(frames.filter((frame) => !frame.hidden)).toHaveLength(1);
-    expect(frames[0]).not.toHaveAttribute("hidden");
-    expect(document.querySelectorAll(".character-motion, [data-motion-layer]")).toHaveLength(0);
+    const board = document.querySelector<HTMLImageElement>(".character-board");
+    expect(board).toHaveAttribute("width", "1122");
+    expect(board).toHaveAttribute("height", "1402");
+    expect(document.querySelectorAll(".character-frame, .character-motion, [data-motion-layer], .connection-layer")).toHaveLength(0);
     expect(screen.queryByRole("group", { name: /캐릭터 화면 선택/ })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /장비 보드|캐릭터 A|캐릭터 B|장비 설명 모두 보기/ })).not.toBeInTheDocument();
     expect(screen.getAllByRole("button").filter((button) => button.classList.contains("equipment-hotspot"))).toHaveLength(4);

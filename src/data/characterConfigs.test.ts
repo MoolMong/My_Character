@@ -2,14 +2,13 @@ import { describe, expect, it } from "vitest";
 import { characterConfig, validateCharacterConfig } from "./characterConfigs";
 
 describe("character config data", () => {
-  it("defines one character with five stable floor-aligned idle frames", () => {
+  it("defines one static board at the supplied source dimensions", () => {
     expect(() => validateCharacterConfig(characterConfig)).not.toThrow();
     expect(characterConfig.id).toBe("main-character");
-    expect(characterConfig.frames.map(({ id }) => id)).toEqual(["neutral", "inhale", "peak", "exhale", "settle"]);
-    expect(characterConfig.frames).toHaveLength(5);
-    expect(characterConfig.floorY).toBe(87.5);
-    expect(characterConfig.frames.map(({ floorY }) => floorY)).toEqual([87.5, 87.5, 87.5, 87.5, 87.5]);
-    expect(characterConfig.width / characterConfig.height).toBeCloseTo(2 / 3);
+    expect(characterConfig.width).toBe(1122);
+    expect(characterConfig.height).toBe(1402);
+    expect(characterConfig.width / characterConfig.height).toBeCloseTo(1122 / 1402);
+    expect(characterConfig.artwork).toContain("character-board-v2.png");
   });
 
   it("uses one bounded four-item map with honest infrastructure copy", () => {
