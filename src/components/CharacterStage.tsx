@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { characterConfig } from "../data/characterConfigs";
-import { useFinePointer } from "../hooks/useFinePointer";
 import { CharacterVisual } from "./CharacterVisual";
 import { EquipmentHotspot } from "./EquipmentHotspot";
 import { EquipmentTooltip } from "./EquipmentTooltip";
+import { ConnectionLine } from "./ConnectionLine";
 
 type Mode = "hover" | "focus" | "pinned" | null;
 export function CharacterStage() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>(null);
-  const finePointer = useFinePointer();
   const explorerRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef(new Map<string, HTMLButtonElement>());
   const active = characterConfig.hotspots.find((item) => item.id === activeId) ?? null;
@@ -19,7 +18,7 @@ export function CharacterStage() {
     const id = activeId;
     setActiveId(null);
     setMode(null);
-    if (restoreFocus && id) requestAnimationFrame(() => buttonRefs.current.get(id)?.focus());
+    if (restoreFocus && id) buttonRefs.current.get(id)?.focus();
   }, [activeId]);
 
   const togglePinned = (id: string) => {
@@ -45,11 +44,13 @@ export function CharacterStage() {
 
   return (
     <div className="equipment-explorer" ref={explorerRef} role="group" aria-label="인터랙티브 캐릭터 장비 보드" data-hotspot-debug={hotspotDebug || undefined}>
-      {hotspotDebug && <p className="debug-label" aria-hidden="true">hotspot debug · static board</p>}
-      <div className="stage-shell" style={{ aspectRatio: `${characterConfig.width} / ${characterConfig.height}` }}>
+      {hotspotDebug && <p className="debug-label" aria-hidden="true">hotspot debug · character equipment</p>}
+      <div className="stage-shell" style={{ aspectRatio: `${characterConfig.width} / ${characterConfig.height}` }} data-side={active?.tooltipSide}>
         <div className="character-stage" data-testid="character-stage" data-config={characterConfig.id}>
           <div className="character-scene">
             <CharacterVisual config={characterConfig} />
+            {active && <svg className="outline-layer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon className="equipment-outline" data-outline={active.id} points={active.outline.map(({ x, y }) => `${x},${y}`).join(" ")} /></svg>}
+            {active && <ConnectionLine start={active.itemAnchor} end={active.bubbleAnchor} />}
             <div className="hotspot-layer">
               {characterConfig.hotspots.map((item) => (
                 <EquipmentHotspot
@@ -58,8 +59,8 @@ export function CharacterStage() {
                   subtle
                   active={activeId === item.id}
                   buttonRef={(node) => { if (node) buttonRefs.current.set(item.id, node); else buttonRefs.current.delete(item.id); }}
-                  onPointerEnter={() => { if (finePointer && mode !== "pinned") { setActiveId(item.id); setMode("hover"); } }}
-                  onPointerLeave={() => { if (finePointer && mode === "hover" && activeId === item.id) close(); }}
+                  onPointerEnter={() => { if (mode !== "pinned") { setActiveId(item.id); setMode("hover"); } }}
+                  onPointerLeave={() => { if (mode === "hover" && activeId === item.id) close(); }}
                   onFocus={() => { if (mode !== "pinned") { setActiveId(item.id); setMode("focus"); } }}
                   onBlur={() => { if (mode === "focus" && activeId === item.id) close(); }}
                   onClick={() => togglePinned(item.id)}
@@ -68,9 +69,9 @@ export function CharacterStage() {
             </div>
           </div>
         </div>
-      </div>
-      <div className="equipment-detail-slot" aria-live="polite">
-        {active && <EquipmentTooltip item={active} onClose={() => close(mode === "pinned")} />}
+        <div className={`equipment-detail-slot${active ? ` equipment-detail-slot--${active.tooltipSide}` : ""}`} data-bubble-tail={active?.tooltipSide} aria-live="polite">
+          {active && <EquipmentTooltip item={active} onClose={() => close(mode === "pinned")} />}
+        </div>
       </div>
     </div>
   );

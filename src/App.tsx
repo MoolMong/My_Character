@@ -15,7 +15,7 @@ export default function App() {
         <section className="hero" aria-labelledby="page-title">
           <h1 id="page-title" className="visually-hidden">클라우드 인프라 엔지니어 포트폴리오</h1>
           <CharacterStage />
-          <p className="instruction"><span className="desktop-instruction">보드의 창, 방패, 장갑, 신발 카드를 선택해 보세요. Tab 키로도 살펴볼 수 있습니다.</span><span className="touch-instruction">보드의 장비 카드를 탭해 보세요.</span></p>
+          <p className="instruction"><span className="desktop-instruction">캐릭터의 창, 갑옷, 방패, 장갑, 망토, 신발을 선택해 보세요. Tab 키로도 살펴볼 수 있습니다.</span><span className="touch-instruction">캐릭터의 장비를 탭해 보세요.</span></p>
           <a className="scroll-cue" href="#about">이야기 더 보기 <span aria-hidden="true">↓</span></a>
         </section>
         <div className="content-sections">

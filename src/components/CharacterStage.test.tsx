@@ -1,77 +1,75 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { CharacterStage } from "./CharacterStage";
 
 describe("CharacterStage", () => {
-  it("renders one static composed board with four mapped hotspots and no legacy runtime", () => {
+  it("initially renders only one tight character frame and no interaction artwork", () => {
     render(<CharacterStage />);
-
-    expect(screen.getByRole("group", { name: "인터랙티브 캐릭터 장비 보드" })).toBeInTheDocument();
     expect(screen.getByTestId("character-stage")).toHaveAttribute("data-config", "main-character");
-    const board = document.querySelector<HTMLImageElement>(".character-board");
-    expect(board).toHaveAttribute("width", "1122");
-    expect(board).toHaveAttribute("height", "1402");
-    expect(document.querySelectorAll(".character-frame, .character-motion, [data-motion-layer], .connection-layer")).toHaveLength(0);
-    expect(screen.queryByRole("group", { name: /캐릭터 화면 선택/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /장비 보드|캐릭터 A|캐릭터 B|장비 설명 모두 보기/ })).not.toBeInTheDocument();
-    expect(screen.getAllByRole("button").filter((button) => button.classList.contains("equipment-hotspot"))).toHaveLength(4);
-    expect(["spear", "shield", "gloves", "shoes"].map((id) => document.querySelector(`[data-equipment="${id}"]`))).not.toContain(null);
+    expect(document.querySelectorAll(".character-frame")).toHaveLength(4);
+    expect(document.querySelectorAll(".character-frame[aria-hidden=false]")).toHaveLength(1);
+    expect(document.querySelector(".character-board")).not.toBeInTheDocument();
+    expect(document.querySelector(".equipment-outline")).not.toBeInTheDocument();
+    expect(document.querySelector(".connection-layer")).not.toBeInTheDocument();
+    expect(screen.queryByRole("region")).not.toBeInTheDocument();
+    expect(document.querySelectorAll(".equipment-hotspot")).toHaveLength(6);
   });
 
-  it("opens, switches, and toggles equipment details", async () => {
+  it.each([
+    ["spear", "컨테이너 수호창", "Kubernetes"],
+    ["armor", "프라이빗 철갑", "OpenStack"],
+    ["shield", "구름 기사의 방패", "AWS"],
+    ["gloves", "닳고닳은 파이썬 장갑", "Python"],
+    ["cape", "설계자의 망토", "Terraform"],
+    ["shoes", "리눅스 여행 부츠", "Linux"],
+  ])("reveals silhouette, connector and bubble for %s", async (id, title, technology) => {
+    const user = userEvent.setup();
+    render(<CharacterStage />);
+    const trigger = document.querySelector<HTMLButtonElement>(`[data-equipment="${id}"]`)!;
+    await user.click(trigger);
+    expect(document.querySelector(`[data-outline="${id}"]`)).toBeInTheDocument();
+    expect(document.querySelector(".connection-layer")).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: title })).toHaveTextContent(technology);
+    expect(document.querySelector(".equipment-detail-slot")).toHaveAttribute("data-bubble-tail", id === "spear" || id === "gloves" || id === "shoes" ? "left" : "right");
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("routes the portrait connector outside the character before reaching the bubble", async () => {
+    const user = userEvent.setup();
+    render(<CharacterStage />);
+    await user.click(screen.getByRole("button", { name: /장갑/ }));
+    expect(document.querySelector(".connection-portrait.connection-line")).toHaveAttribute(
+      "points",
+      "29,48 0,48 0,100 50,100",
+    );
+  });
+
+  it("previews on hover and keeps click pinning semantics", async () => {
     const user = userEvent.setup();
     render(<CharacterStage />);
     const gloves = screen.getByRole("button", { name: /장갑/ });
-    const shoes = screen.getByRole("button", { name: /부츠/ });
-
-    expect(gloves).toHaveAttribute("aria-expanded", "false");
+    fireEvent.pointerEnter(gloves);
+    expect(screen.getByRole("region", { name: /장갑/ })).toBeInTheDocument();
+    fireEvent.pointerLeave(gloves);
+    expect(screen.queryByRole("region")).not.toBeInTheDocument();
     await user.click(gloves);
-    expect(gloves).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByRole("region", { name: "닳고닳은 파이썬 장갑" })).toHaveTextContent("Python");
-
-    await user.click(shoes);
-    expect(gloves).toHaveAttribute("aria-expanded", "false");
-    expect(shoes).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByRole("region", { name: "리눅스 여행 부츠" })).toHaveTextContent("Linux");
-
-    await user.click(shoes);
-    expect(shoes).toHaveAttribute("aria-expanded", "false");
+    fireEvent.pointerLeave(gloves);
+    expect(screen.getByRole("region", { name: /장갑/ })).toBeInTheDocument();
   });
 
-  it("supports keyboard selection and matching accessible relationships", async () => {
+  it("supports Escape, close, outside-close, and focus restoration", async () => {
     const user = userEvent.setup();
-    render(<CharacterStage />);
-    const gloves = screen.getByRole("button", { name: /장갑/ });
-    gloves.focus();
-    await user.keyboard("{Enter}");
-
-    expect(gloves).toHaveAttribute("aria-expanded", "true");
-    expect(gloves).toHaveAttribute("aria-controls", "equipment-detail-gloves");
-    expect(screen.getByRole("region", { name: "닳고닳은 파이썬 장갑" })).toHaveAttribute("id", "equipment-detail-gloves");
-  });
-
-  it("closes pinned details with Escape and restores trigger focus", async () => {
-    const user = userEvent.setup();
-    render(<CharacterStage />);
+    render(<><CharacterStage /><button>outside</button></>);
     const shoes = screen.getByRole("button", { name: /부츠/ });
     await user.click(shoes);
     await user.keyboard("{Escape}");
     expect(shoes).toHaveFocus();
-    expect(shoes).toHaveAttribute("aria-expanded", "false");
-  });
-
-  it("closes with its close button and on an outside pointer action", async () => {
-    const user = userEvent.setup();
-    render(<><CharacterStage /><button>outside</button></>);
-    const gloves = screen.getByRole("button", { name: /장갑/ });
-
-    await user.click(gloves);
-    await user.click(screen.getByRole("button", { name: "닳고닳은 파이썬 장갑 설명 닫기" }));
-    expect(gloves).toHaveAttribute("aria-expanded", "false");
-
-    await user.click(gloves);
+    await user.click(shoes);
+    await user.click(screen.getByRole("button", { name: /설명 닫기/ }));
+    expect(shoes).toHaveFocus();
+    await user.click(shoes);
     await user.click(screen.getByRole("button", { name: "outside" }));
-    expect(gloves).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("region")).not.toBeInTheDocument();
   });
 });

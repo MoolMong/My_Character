@@ -5,18 +5,24 @@
 
 ## MUST acceptance criteria
 - 단일 캐릭터 중심 Hero; Character A/B/Equipment Board 선택 UI 없음
-- 장갑·신발·창·방패 hotspot click/tap/keyboard 동작 및 설명 표시
+- 초기 화면에는 깨끗한 paper/grid 배경 위 중앙 캐릭터만 표시; 원본 보드의 baked panel/문구/설명 DOM/connector/outline 없음
+- 장갑·창·갑옷·신발·망토·방패의 착용/소지 위치 hotspot이 hover/focus/click/tap/keyboard로 동작
+- 활성 장비에 분홍 silhouette outline, 장비에서 시작하는 분홍 connector, endpoint에 pop-in speech bubble 순서로 표시
+- bubble은 제목·기술·설명·닫기와 접근 가능한 region semantics 제공
+- hover preview와 click/tap pinning, Enter/Space, Escape, outside-close, focus restoration 유지
+- tight transparent 4-frame idle; 동일 canvas/baseline, 발 고정, upper body/hair/cape만 integer 이동, 동시에 한 frame만 표시
 - 캐릭터 이미지가 깨지거나 ghosting/double-edge 없이 정상 표시
 - 발/바닥 접점 고정; 전체 캐릭터 bobbing 금지
 - desktop, mobile portrait, mobile landscape에서 overflow 없음
 - reduced-motion에서 motion 정지, interaction 접근성 유지
+- 390×844 portrait에서는 bubble을 캐릭터 아래/근처, 844×390 landscape와 desktop에서는 장비를 가리지 않는 좌/우에 표시
 - `npm run typecheck`, `npm test`, `npm run build` PASS
 - 실제 preview/browser에서 console 치명 오류 없음
-- GitHub Pages 최신 commit 반영 및 HTTP 200
+- 배포를 요청받은 경우에만 GitHub Pages 최신 commit 반영 및 HTTP 200 확인
 - 기존 `prototype-v0.1` 복구 tag 보존
 
 ## SHOULD quality criteria
-- 캐릭터 원본 identity/픽셀 선명도 유지
+- 원본 `src/assets/character-board-v2.png` 및 recovery assets/tags 변경 없이 보존
 - hover/focus/tap feedback이 과하지 않음
 - 설명 panel이 캐릭터를 과도하게 가리지 않음
 - 시각적 motion은 자연스럽고, 불안정한 asset이면 정적 master를 우선
@@ -26,6 +32,7 @@
 - 비밀/개인정보 커밋
 - force push, PR merge, 기존 backup 삭제
 - 검증되지 않은 새 캐릭터/asset 생성
+- runtime/dist에서 full board와 기존 five-frame asset 사용
 - MUST 실패 상태 배포
 
 ## Verification
