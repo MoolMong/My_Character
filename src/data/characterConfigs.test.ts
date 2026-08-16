@@ -2,13 +2,13 @@ import { describe, expect, it } from "vitest";
 import { characterConfig, validateCharacterConfig } from "./characterConfigs";
 
 describe("character config data", () => {
-  it("defines one character with one stable floor-aligned frame", () => {
+  it("defines one character with five stable floor-aligned idle frames", () => {
     expect(() => validateCharacterConfig(characterConfig)).not.toThrow();
     expect(characterConfig.id).toBe("main-character");
-    expect(characterConfig.frames.map(({ id }) => id)).toEqual(["idle-a"]);
-    expect(characterConfig.frames).toHaveLength(1);
+    expect(characterConfig.frames.map(({ id }) => id)).toEqual(["neutral", "inhale", "peak", "exhale", "settle"]);
+    expect(characterConfig.frames).toHaveLength(5);
     expect(characterConfig.floorY).toBe(87.5);
-    expect(characterConfig.frames.map(({ floorY }) => floorY)).toEqual([87.5]);
+    expect(characterConfig.frames.map(({ floorY }) => floorY)).toEqual([87.5, 87.5, 87.5, 87.5, 87.5]);
     expect(characterConfig.width / characterConfig.height).toBeCloseTo(2 / 3);
   });
 

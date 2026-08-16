@@ -1,9 +1,13 @@
-import portraitAArtwork from "../assets/character-portrait-a-cutout.png";
+import neutralArtwork from "../assets/idle-frames/idle-0-neutral.png";
+import inhaleArtwork from "../assets/idle-frames/idle-1-inhale.png";
+import peakArtwork from "../assets/idle-frames/idle-2-peak.png";
+import exhaleArtwork from "../assets/idle-frames/idle-3-exhale.png";
+import settleArtwork from "../assets/idle-frames/idle-4-settle.png";
 import type { EquipmentItem } from "./equipment";
 import { validateEquipment } from "./equipment";
 
 export type PortraitFrame = {
-  id: "idle-a";
+  id: "neutral" | "inhale" | "peak" | "exhale" | "settle";
   artwork: string;
   /** Percentage y-coordinate where the soles meet the floor in this source image. */
   floorY: number;
@@ -15,7 +19,7 @@ export type CharacterConfig = {
   height: number;
   /** Shared scene baseline. Frame offsets are calculated against this value. */
   floorY: number;
-  frames: [PortraitFrame];
+  frames: [PortraitFrame, PortraitFrame, PortraitFrame, PortraitFrame, PortraitFrame];
   hotspots: EquipmentItem[];
 };
 
@@ -44,9 +48,8 @@ const portraitCopy = {
   },
 } as const;
 
-// Calibrated against portrait A, the only runtime frame. The second source file
-// is retained as a reference asset but is deliberately not imported: swapping
-// full-frame raster poses produced visible double edges and floor instability.
+// Calibrated against portrait A. Generated idle frames keep every pixel from
+// row 1050 down unchanged, so the equipment map and sole baseline stay fixed.
 const portraitHotspots: EquipmentItem[] = [
   { id: "spear", ...portraitCopy.spear, hitbox: { x: 68, y: 56, width: 27, height: 25 }, anchor: { x: 80, y: 66 }, tooltipSide: "right" },
   { id: "shield", ...portraitCopy.shield, hitbox: { x: 10, y: 46, width: 27, height: 29 }, anchor: { x: 24, y: 59 }, tooltipSide: "left" },
@@ -60,7 +63,11 @@ export const characterConfig: CharacterConfig = {
   height: 1536,
   floorY: 87.5,
   frames: [
-    { id: "idle-a", artwork: portraitAArtwork, floorY: 87.5 },
+    { id: "neutral", artwork: neutralArtwork, floorY: 87.5 },
+    { id: "inhale", artwork: inhaleArtwork, floorY: 87.5 },
+    { id: "peak", artwork: peakArtwork, floorY: 87.5 },
+    { id: "exhale", artwork: exhaleArtwork, floorY: 87.5 },
+    { id: "settle", artwork: settleArtwork, floorY: 87.5 },
   ],
   hotspots: portraitHotspots,
 };
@@ -68,7 +75,7 @@ export const characterConfig: CharacterConfig = {
 export function validateCharacterConfig(config: CharacterConfig): void {
   if (config.width <= 0 || config.height <= 0) throw new Error("Invalid character dimensions");
   if (config.floorY < 0 || config.floorY > 100) throw new Error("Scene floor is outside stage");
-  if (config.frames.length !== 1) throw new Error("Character must define one stable frame");
+  if (config.frames.length !== 5) throw new Error("Character must define exactly five idle frames");
   if (new Set(config.frames.map(({ id }) => id)).size !== config.frames.length) throw new Error("Duplicate portrait frame id");
   for (const frame of config.frames) {
     if (frame.floorY < 0 || frame.floorY > 100) throw new Error(`Frame floor is outside stage: ${frame.id}`);

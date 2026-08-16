@@ -1,30 +1,51 @@
+import { useEffect, useState } from "react";
 import type { CharacterConfig } from "../data/characterConfigs";
 
-export function CharacterVisual({ config }: { config: CharacterConfig }) {
-  const baseFrame = config.frames[0];
+const FRAME_HOLDS_MS = [720, 440, 300, 400, 620] as const;
+
+export function CharacterVisual({ config, debug = false }: { config: CharacterConfig; debug?: boolean }) {
+  const [frameIndex, setFrameIndex] = useState(0);
+  const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = () => {
+      setReducedMotion(query.matches);
+      if (query.matches) setFrameIndex(0);
+    };
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion) {
+      setFrameIndex(0);
+      return;
+    }
+    const timeout = setTimeout(
+      () => setFrameIndex((current) => (current + 1) % config.frames.length),
+      FRAME_HOLDS_MS[frameIndex],
+    );
+    return () => clearTimeout(timeout);
+  }, [config.frames.length, frameIndex, reducedMotion]);
+
+  const activeFrame = config.frames[frameIndex];
 
   return (
     <div className="character-visual" aria-hidden="true" data-floor-y={config.floorY}>
-      <img
-        className="character-frame"
-        src={baseFrame.artwork}
-        alt=""
-        data-frame={baseFrame.id}
-        data-floor-y={baseFrame.floorY}
-      />
-      <svg className="character-motion" viewBox="0 0 100 150" preserveAspectRatio="none" focusable="false">
-        <g className="torso-breath" data-motion-layer="breath">
-          <path className="torso-breath__halo" d="M39 64l3-8 6-2h4l6 2 3 8-4 5H43z" />
-          <path className="torso-breath__spark" d="M49 58h2v2h2v2h-2v2h-2v-2h-2v-2h2z" />
-        </g>
-        <g className="cape-breeze" data-motion-layer="cape">
-          <path d="M71 70h4v2h4v2h-6v-2h-2z" />
-          <path d="M75 76h5v2h3v2h-5v-2h-3z" />
-        </g>
-        <g className="ahoge-glint" data-motion-layer="ahoge">
-          <path d="M51 17h1v2h1v1h-2v-1h-1v-1h1z" />
-        </g>
-      </svg>
+      {config.frames.map((frame, index) => (
+        <img
+          className="character-frame"
+          src={frame.artwork}
+          alt=""
+          data-frame={frame.id}
+          data-frame-index={index}
+          data-floor-y={frame.floorY}
+          hidden={index !== frameIndex}
+          key={frame.id}
+        />
+      ))}
+      {debug && <span className="frame-debug">frame {frameIndex} · {activeFrame.id} · floor {config.floorY}%</span>}
     </div>
   );
 }

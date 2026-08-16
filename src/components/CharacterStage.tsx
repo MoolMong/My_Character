@@ -69,11 +69,11 @@ export function CharacterStage() {
 
   return (
     <div className="equipment-explorer" ref={explorerRef} role="group" aria-label="인터랙티브 캐릭터" data-motion-debug={motionDebug || undefined}>
-      {motionDebug && <p className="debug-label" aria-hidden="true">motion debug · static master · floor {characterConfig.floorY}%</p>}
+      {motionDebug && <p className="debug-label" aria-hidden="true">motion debug · five-frame stepped idle</p>}
       <div className="stage-shell" style={{ aspectRatio: `${characterConfig.width} / ${characterConfig.height}` }}>
         <div className="character-stage" ref={stageRef} data-testid="character-stage" data-config={characterConfig.id}>
           <div className="character-scene">
-            <CharacterVisual config={characterConfig} />
+            <CharacterVisual config={characterConfig} debug={motionDebug} />
             {active && geometry && (
               <ConnectionLine width={geometry.width} height={geometry.height} start={{ x: geometry.width * active.anchor.x / 100, y: geometry.height * active.anchor.y / 100 }} end={geometry.end} />
             )}
